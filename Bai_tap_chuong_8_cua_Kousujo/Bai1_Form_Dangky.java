@@ -3,10 +3,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class Bai1_Form_Dangky extends JFrame implements ActionListener {
+    private JPanel mainPanel, buttonPanel;
+    private JLabel lblHoten, lblNamsinh;
     private JTextField txtHoten, txtNamsinh;
     private JButton btnDangky;
-    private JLabel lblHoten, lblNamsinh;
-    private JPanel mainPanel, buttonPanel;
 
     public Bai1_Form_Dangky() {
         setTitle("Form Đăng Ký");
@@ -50,12 +50,14 @@ public class Bai1_Form_Dangky extends JFrame implements ActionListener {
     }
         @Override
         public void actionPerformed(ActionEvent e) {
-            try {
-                String hoten = txtHoten.getText();
-                int namsinh = Integer.parseInt(txtNamsinh.getText());
-                JOptionPane.showMessageDialog(this, "Họ tên: " + hoten + "\nNăm sinh: " + namsinh);
-            } catch (NumberFormatException er) {
-                JOptionPane.showMessageDialog(this, "Vui lòng nhập năm sinh hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            if (e.getSource() == btnDangky) {
+                try {
+                    String hoten = txtHoten.getText();
+                    int namsinh = Integer.parseInt(txtNamsinh.getText());
+                    JOptionPane.showMessageDialog(this, "Họ tên: " + hoten + "\nNăm sinh: " + namsinh);
+                } catch (NumberFormatException er) {
+                    JOptionPane.showMessageDialog(this, "Vui lòng nhập năm sinh hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     public static void main(String[] args) {

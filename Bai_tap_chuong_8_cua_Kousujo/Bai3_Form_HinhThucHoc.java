@@ -3,13 +3,13 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
 
-public class Bai3 extends JFrame implements ActionListener {
+public class Bai3_Form_HinhThucHoc extends JFrame implements ActionListener {
     private JPanel mainPanel, checkboxPanel, buttonPanel;
     private JLabel lblHinhthuc;
     private JCheckBox chxOn, chxOff;
     private JButton btnXacnhan;
 
-    public Bai3() {
+    public Bai3_Form_HinhThucHoc() {
         setTitle("Form chọn hình thức học");    
         setSize(400, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -75,7 +75,7 @@ public class Bai3 extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Bai3().setVisible(true);
+            new Bai3_Form_HinhThucHoc().setVisible(true);
         });
     }
 }

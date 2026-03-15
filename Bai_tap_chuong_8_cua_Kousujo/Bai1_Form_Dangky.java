@@ -2,13 +2,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Bai1 extends JFrame implements ActionListener {
+public class Bai1_Form_Dangky extends JFrame implements ActionListener {
     private JTextField txtHoten, txtNamsinh;
     private JButton btnDangky;
     private JLabel lblHoten, lblNamsinh;
     private JPanel mainPanel, buttonPanel;
 
-    public Bai1() {
+    public Bai1_Form_Dangky() {
         setTitle("Form Đăng Ký");
         setSize(450, 200);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -60,7 +60,7 @@ public class Bai1 extends JFrame implements ActionListener {
         }
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Bai1().setVisible(true);
+            new Bai1_Form_Dangky().setVisible(true);
         });
     }
 }

@@ -5,12 +5,9 @@
 
     public class Bai5_Form_ChonGioiTinh extends JFrame implements ActionListener {
         private JPanel mainPanel, radioButtonPanel, buttonPanel;
-
         private JLabel lblChongioitinh;
-
         private JRadioButton[] radioBtn ;
         private String[] listGioitinh = {"Nam", "Nữ", "Gay", "khác"};
-
         private JButton btnXacnhan;
 
         public Bai5_Form_ChonGioiTinh() {

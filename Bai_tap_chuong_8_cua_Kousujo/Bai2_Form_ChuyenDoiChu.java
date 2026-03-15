@@ -3,10 +3,11 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class Bai2_Form_ChuyenDoiChu extends JFrame implements ActionListener {
-    private JTextField txtNhapchuoi;
-    private JLabel lblKetqua;
-    private JButton btnUpper, btnLower;
     private JPanel mainPanel, buttonPanel;
+    private JLabel lblKetqua;
+    private JTextField txtNhapchuoi;
+    private JButton btnUpper, btnLower;
+    
 
     public Bai2_Form_ChuyenDoiChu() {
         setTitle("Form đổi chữ hoa - chữ thường");    

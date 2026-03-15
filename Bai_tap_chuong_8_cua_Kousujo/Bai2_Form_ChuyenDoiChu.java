@@ -2,13 +2,13 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-public class Bai2 extends JFrame implements ActionListener {
+public class Bai2_Form_ChuyenDoiChu extends JFrame implements ActionListener {
     private JTextField txtNhapchuoi;
     private JLabel lblKetqua;
     private JButton btnUpper, btnLower;
     private JPanel mainPanel, buttonPanel;
 
-    public Bai2() {
+    public Bai2_Form_ChuyenDoiChu() {
         setTitle("Form đổi chữ hoa - chữ thường");    
         setSize(400, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -61,7 +61,7 @@ public class Bai2 extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
-            new Bai2().setVisible(true);
+            new Bai2_Form_ChuyenDoiChu().setVisible(true);
         });
     }
 }

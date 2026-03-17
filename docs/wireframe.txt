@@ -1,0 +1,88 @@
+PROJECT: THE CHOSEN NUMBER - BLUEPRINT
+
+[MAIN.JAVA]
+|--- Logic: FlatDarkLaf.setup() -> new MainFrame().setVisible(true)
+
+[MAINFRAME (JFrame)]
+|--- Properties: Size(500, 700), Center screen
+|--- Components:
+|    |--- [JMenuBar]:
+|    |    |--- Menu: "Hệ thống" (Item: Reset Game, Exit)
+|    |    |--- Menu: "Thống kê" (Item: Leaderboard - Mở Dialog hiện bảng xếp hạng)
+|    |    |--- Menu: "Hướng dẫn" (Item: Luật chơi - Hiện JOptionPane thông báo)
+|    |
+|    |--- [MAIN_PANEL (CardLayout)]: Chuyển màn hình
+|         |--- Key: "WELCOME" -> [WELCOME_PANEL]
+|         |--- Key: "MODE"    -> [MODE_PANEL] (Chọn 4, 7, 10 ô)
+|         |--- Key: "GAME"    -> [GAME_PANEL]
+|         |--- Key: "RESULT"  -> [RESULT_PANEL] (Hiện Thắng/Thua)
+
+-----------------------------------------------------------
+
+[WELCOME_PANEL (JPanel - GridBagLayout)]
+|--- Center:
+|    |--- JLabel: "THE CHOSEN NUMBER" (Font: 36, Bold, Accent Color)
+|    |--- JPanel (TitledBorder: "Lần chơi gần nhất"):
+|    |    |--- JLabel: "Player: [Name] | Score: [Time] | Mode: [Easy]"
+|    |--- Box (Vertical):
+|    |    |--- JButton: "CONTINUE" (Enabled: False nếu chưa có Save game)
+|    |    |--- JButton: "NEW GAME" -> Action: mainframe.showScreen("MODE")
+
+[MODE_PANEL (JPanel - GridBagLayout)]
+|--- Center:
+|    |--- JLabel: "CHỌN ĐỘ KHÓ"
+|    |--- JRadioButton Group: [Dễ (4 ô)], [Vừa (7 ô)], [Khó (10 ô)]
+|    |--- JButton: "VÀO GAME" -> Action: Khởi tạo thông số Game -> mainframe.showScreen("GAME")
+|    |--- JButton: "QUAY LẠI" -> Action: mainframe.showScreen("WELCOME")
+
+[GAME_PANEL (JPanel - BorderLayout)]
+|--- North (Phần trên): 
+|    |--- JLabel: "Thời gian: 00:00" | JLabel: "Điểm: 1000"
+|--- Center (Phần giữa):
+|    |--- JPanel (GridLayout - 1 row, x columns):
+|    |    |--- Chứa các [JTextField] (Font to, căn giữa). 
+|    |    |--- Syntax FlatLaf: txt.putClientProperty("JTextField.placeholderText", "?")
+|--- South (Phần dưới):
+|    |--- JProgressBar: (Hiển thị % số lượt đoán còn lại - Màu xanh sang đỏ)
+|    |--- JPanel (FlowLayout):
+|    |    |--- JButton: "KIỂM TRA"
+|    |    |--- JButton: "THOÁT" -> Action: Show ConfirmDialog -> Back to Welcome
+
+P/s : GridBagLayout is fucking bullshit 😭😭😭😭😭😭😭😭🙏🙏🙏
+
++-------------------------------------------------------+
+|  [ File ] [ Settings ] [ Help ] (JMenuBar)            |
++-------------------------------------------------------+
+|                                                       |
+|             THE CHOSEN NUMBER (Title)                 |
+|           "Find the truth among stars"                |
+|                                                       |
+|    +---------------------------------------------+    |
+|    |        RECENT SESSION (Info Box)            |    |
+|    |  Last Player: Kousujo                       |    |
+|    |  Result: Win (5 attempts)                   |    |
+|    +---------------------------------------------+    |
+|                                                       |
+|             [ CONTINUE ]  (Button 1)                  |
+|             [ NEW GAME ]  (Button 2)                  |
+|                                                       |
++-------------------------------------------------------+
+| v1.0.0                      System: Connected [OK]    |
++-------------------------------------------------------+   
+
+
++-------------------------------------------------------+
+|  [ < BACK ]                                           |
++-------------------------------------------------------+
+|                                                       |
+|                CHỌN CHẾ ĐỘ CHƠI                       |
+|                                                       |
+|       ( ) DỄ     - 4 ô số (Phạm vi 1-50)              |
+|       (*) VỪA    - 7 ô số (Phạm vi 1-100)             |
+|       ( ) KHÓ    - 10 ô số (Phạm vi 1-500)            |
+|                                                       |
+|                  [ BẮT ĐẦU ]                          |
+|                                                       |
++-------------------------------------------------------+
+
+

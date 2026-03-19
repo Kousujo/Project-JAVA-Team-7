@@ -16,10 +16,10 @@ public class MainFrame extends JFrame {
         mainPanel = new JPanel(cardLayout);
 
         WelcomePanel welcomePanel = new WelcomePanel(this);
-        NewGamePanel gamePanel = new NewGamePanel(this);
+        ModePanel modePanel = new ModePanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
-        mainPanel.add(gamePanel, "Game");
+        mainPanel.add(modePanel, "Mode");
 
         add(mainPanel);
     }

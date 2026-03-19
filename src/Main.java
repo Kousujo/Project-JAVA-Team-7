@@ -1,8 +1,8 @@
-import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.*;
 
 public class Main {
     public static void main(String[] args) {
-        FlatDarkLaf.setup();
+        FlatLightLaf.setup();
         new MainFrame().setVisible(true); 
     }
-}
+}           

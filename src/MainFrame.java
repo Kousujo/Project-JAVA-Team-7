@@ -22,9 +22,13 @@ public class MainFrame extends JFrame implements ActionListener {
 
         WelcomePanel welcomePanel = new WelcomePanel(this);
         ModePanel modePanel = new ModePanel(this);
+        LoginPanel loginPanel = new LoginPanel(this);
+        RegisterPanel registerPanel = new RegisterPanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
         mainPanel.add(modePanel, "Mode");
+        mainPanel.add(loginPanel, "Login");
+        mainPanel.add(registerPanel, "Register");
 
         add(mainPanel);
     }

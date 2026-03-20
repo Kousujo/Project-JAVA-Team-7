@@ -2,9 +2,9 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class GameDataBase {
-    private String url = "jdbc:sqlserver://localhost:1433;databaseName=";
+    private String url = "jdbc:sqlserver://localhost:1433;databaseName=...;encrypt=false;trustServerCertificate=true;useUnicode";
     private String user = "sa";
-    private String pass = "";
+    private String pass = "123456";
 
     public void saveScore(String name, int score, String mode) {
         try {
@@ -17,7 +17,7 @@ public class GameDataBase {
             ps.setInt(2, score);
             ps.setString(3, mode);
 
-            ps.executeUpdate()
+            ps.executeUpdate();
             
             ps.close();
             conn.close();

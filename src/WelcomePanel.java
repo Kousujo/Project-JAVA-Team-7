@@ -8,7 +8,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
     private JPanel statusPanel, buttonPanel, infoPanel;
     private MultiLineOutlineLabel lbltitle;
     private JLabel lblsubtitle, lblname, lblscore, lblmode, lblversion, lblauthor;
-    private JButton btnNewGame, btnContinue;
+    private JButton btnNewGame, btnContinue, btnAccounts;
     private Image backgroundImage;
 
     public WelcomePanel(MainFrame frame) {
@@ -19,6 +19,19 @@ public class WelcomePanel extends JPanel implements ActionListener {
         GridBagConstraints gbc = new GridBagConstraints(); 
         Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
 
+        btnAccounts = new JButton("👤"); 
+        btnAccounts.setToolTipText("Đăng nhập / Đăng ký");
+        btnAccounts.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        btnAccounts.setPreferredSize(new Dimension(50, 50));
+        btnAccounts.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_SQUARE);
+        btnAccounts.putClientProperty(FlatClientProperties.STYLE, "arc: 999");
+        btnAccounts.setBackground(new Color(255, 255, 255, 150));
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 1.0; gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHEAST;
+        gbc.insets = new Insets(20, 0, 0, 20);
+        add(btnAccounts, gbc);
 
         lbltitle = new MultiLineOutlineLabel("THE CHOSEN\nNUMBER", SwingConstants.CENTER);
         lbltitle.setFont(new Font("SansSerif", Font.BOLD, 48));
@@ -122,6 +135,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
         add(infoPanel, gbc);
 
         btnNewGame.addActionListener(this);
+        btnAccounts.addActionListener(this); 
+        btnContinue.addActionListener(this);
     }
 
     @Override
@@ -132,7 +147,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         
-        g2d.setColor(new Color(0, 0, 0, 20)); 
+        g2d.setColor(new Color(0, 0, 0, 15)); 
         g2d.fillRect(0, 0, getWidth(), getHeight());
         
         g2d.dispose();
@@ -142,6 +157,12 @@ public class WelcomePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnNewGame) {
             mainframe.showScreen("Mode");
+        }
+        if (e.getSource() == btnContinue) {
+            // TODO: Kết nối GameDatabase
+        }
+        if (e.getSource() == btnAccounts) {
+            mainframe.showScreen("Login");
         }
     }
 }

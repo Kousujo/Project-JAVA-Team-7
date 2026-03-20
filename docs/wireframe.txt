@@ -50,29 +50,32 @@ PROJECT: THE CHOSEN NUMBER - BLUEPRINT
 
 P/s : GridBagLayout is fucking bullshit 😭😭😭😭😭😭😭😭🙏🙏🙏
 
+
+WELCOME_PANEL
 +-------------------------------------------------------+
-|  [ File ] [ Settings ] [ Help ] (JMenuBar)            |
+|  [ Hệ thống ] [ Tuỳ chỉnh ] [ Trợ giúp ] (JMenuBar)   |
 +-------------------------------------------------------+
-|                                                       |
+|  |🏆|                                         |👤|   |
 |             THE CHOSEN NUMBER (Title)                 |
-|           "Find the truth among stars"                |
+|            "Chọn số bạn nghĩ là đúng"                 |
 |                                                       |
 |    +---------------------------------------------+    |
-|    |        RECENT SESSION (Info Box)            |    |
-|    |  Last Player: Kousujo                       |    |
-|    |  Result: Win (5 attempts)                   |    |
+|    |  👤 Người chơi: [ NAME ]                    |    |
+|    |  ⭐ Điểm cao:   [ SCORE ]                   |    |
+|    |  🎯 Chế độ:     [ MODE ]                    |    |
 |    +---------------------------------------------+    |
 |                                                       |
-|             [ CONTINUE ]  (Button 1)                  |
-|             [ NEW GAME ]  (Button 2)                  |
+|             [ NEW GAME ]    [ CONTINUE ]              |
+|                                                       |
 |                                                       |
 +-------------------------------------------------------+
-| v1.0.0                      System: Connected [OK]    |
+| Version 1.0.0                     Developed by Team 7 |
 +-------------------------------------------------------+   
 
 
+MODE_PANEL
 +-------------------------------------------------------+
-|  [ < BACK ]                                           |
+|  [ Hệ thống ] [ Tuỳ chỉnh ] [ Trợ giúp ]              |
 +-------------------------------------------------------+
 |                                                       |
 |                CHỌN CHẾ ĐỘ CHƠI                       |
@@ -81,8 +84,30 @@ P/s : GridBagLayout is fucking bullshit 😭😭😭😭😭😭😭😭🙏🙏
 |       (*) VỪA    - 7 ô số (Phạm vi 1-100)             |
 |       ( ) KHÓ    - 10 ô số (Phạm vi 1-500)            |
 |                                                       |
-|                  [ BẮT ĐẦU ]                          |
+|                  [ START ]    [ BACK ]                |
 |                                                       |
 +-------------------------------------------------------+
 
+
+Leaderboard
++-------------------------------------------------------+
+|  [ Hệ thống ] [ Tuỳ chỉnh ] [ Trợ giúp ]              |
++-------------------------------------------------------+
+|                                                       |
+|                 🏆 BẢNG XẾP HẠNG 🏆                   |
+|                   (OUTLINE TITLE)                     |
+|                                                       |
+|    +---------------------------------------------+    |
+|    |  [ Rank ] [ Name ]    [ Score ] [ Mode ]    |    |
+|    |---------------------------------------------|    |
+|    |    1      Kousujo      500       HARD       |    |
+|    |    2      Merlin       450       NORMAL     |    |
+|    |    3      Team 7       300       EASY       |    |
+|    |    ...                                      |    |
+|    +---------------------------------------------+    |
+|               (JTable trong ScrollPane)               |
+|                                                       |
+|                  [ CHƠI NGAY ]                        |
+|                                                       |
++-------------------------------------------------------+
 

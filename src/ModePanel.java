@@ -111,7 +111,7 @@ public class ModePanel extends JPanel implements ActionListener {
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         
-        g2d.setColor(new Color(0, 0, 0, 20)); 
+        g2d.setColor(new Color(0, 0, 0, 15)); 
         g2d.fillRect(0, 0, getWidth(), getHeight());
         
         g2d.dispose();

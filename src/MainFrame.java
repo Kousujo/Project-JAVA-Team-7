@@ -11,7 +11,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public MainFrame() {
         setTitle("The Chosen Number");
-        setSize(500, 700);
+        setSize(600, 800);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -24,11 +24,15 @@ public class MainFrame extends JFrame implements ActionListener {
         ModePanel modePanel = new ModePanel(this);
         LoginPanel loginPanel = new LoginPanel(this);
         RegisterPanel registerPanel = new RegisterPanel(this);
+        LeaderboardPanel leaderboard = new LeaderboardPanel(this);
+        EasyGamePanel easyGamePanel = new EasyGamePanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
         mainPanel.add(modePanel, "Mode");
         mainPanel.add(loginPanel, "Login");
         mainPanel.add(registerPanel, "Register");
+        mainPanel.add(leaderboard, "Leaderboard");
+        mainPanel.add(easyGamePanel, "Easy");
 
         add(mainPanel);
     }

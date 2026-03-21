@@ -8,7 +8,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
     private JPanel statusPanel, buttonPanel, infoPanel;
     private MultiLineOutlineLabel lbltitle;
     private JLabel lblsubtitle, lblname, lblscore, lblmode, lblversion, lblauthor;
-    private JButton btnNewGame, btnContinue, btnAccounts;
+    private JButton btnNewGame, btnContinue, btnAccounts, btnLeaderboard;
     private Image backgroundImage;
 
     public WelcomePanel(MainFrame frame) {
@@ -18,6 +18,20 @@ public class WelcomePanel extends JPanel implements ActionListener {
         setLayout(new GridBagLayout()); 
         GridBagConstraints gbc = new GridBagConstraints(); 
         Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
+
+        btnLeaderboard = new JButton("🏆");
+        btnLeaderboard.setToolTipText("Bảng xếp hạng");
+        btnLeaderboard.setFont(new Font("SansSerif", Font.PLAIN, 20));
+        btnLeaderboard.setPreferredSize(new Dimension(50, 50));
+        btnLeaderboard.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_SQUARE);
+        btnLeaderboard.putClientProperty(FlatClientProperties.STYLE, "arc: 999");
+        btnLeaderboard.setBackground(new Color(255, 255, 255, 150));
+
+        gbc.gridx = 0; gbc.gridy = 0;
+        gbc.weightx = 1.0; gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHWEST; 
+        gbc.insets = new Insets(20, 20, 0, 0); 
+        add(btnLeaderboard, gbc);
 
         btnAccounts = new JButton("👤"); 
         btnAccounts.setToolTipText("Đăng nhập / Đăng ký");
@@ -47,7 +61,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
         gbc.weighty = 0.3;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(70, 0, -20, 0); 
+        gbc.insets = new Insets(85, 0, -20, 0); 
         add(lbltitle, gbc);
 
         gbc.gridy = 1;
@@ -137,6 +151,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
         btnNewGame.addActionListener(this);
         btnAccounts.addActionListener(this); 
         btnContinue.addActionListener(this);
+        btnLeaderboard.addActionListener(this);
     }
 
     @Override
@@ -163,6 +178,9 @@ public class WelcomePanel extends JPanel implements ActionListener {
         }
         if (e.getSource() == btnAccounts) {
             mainframe.showScreen("Login");
+        }
+        if (e.getSource() == btnLeaderboard) {
+            mainframe.showScreen("Leaderboard");
         }
     }
 }

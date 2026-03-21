@@ -89,7 +89,7 @@ public class ModePanel extends JPanel implements ActionListener {
 
         gbc.gridy = 2;
         gbc.weighty = 0.3;
-        gbc.insets = new Insets(0, 0, 30, 0);
+        gbc.insets = new Insets(0, 0, 65, 0);
         add(buttonPanel, gbc);
 
         btnStart.addActionListener(this);
@@ -120,7 +120,15 @@ public class ModePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnStart) {
-            mainframe.showScreen("Game"); 
+            if (rbEasy.isSelected()) {
+                mainframe.showScreen("Easy"); 
+            }
+            else if (rbNormal.isSelected()) {
+                mainframe.showScreen("Normal"); 
+            }
+            else if (rbHard.isSelected()) {
+                mainframe.showScreen("Hard"); 
+            }
         } else if (e.getSource() == btnBack) {
             mainframe.showScreen("Welcome");
         }

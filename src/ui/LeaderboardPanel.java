@@ -1,4 +1,9 @@
+package ui;
+
 import com.formdev.flatlaf.FlatClientProperties;
+
+import component.MultiLineOutlineLabel;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;

@@ -1,3 +1,5 @@
+package component;
+
 import java.awt.*;
 import javax.swing.*;
 

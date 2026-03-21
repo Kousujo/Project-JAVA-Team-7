@@ -1,4 +1,9 @@
+package ui;
+
 import com.formdev.flatlaf.FlatClientProperties;
+
+import component.MultiLineOutlineLabel;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;

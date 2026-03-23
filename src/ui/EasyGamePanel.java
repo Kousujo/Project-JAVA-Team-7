@@ -226,4 +226,26 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
     }
+/* 
+    // Trong hàm xử lý Game Over của EasyGamePanel
+    private void endGame(boolean isWin) {
+        gameTimer.stop();
+        String status = isWin ? "WINNER" : "GAME OVER";
+        
+        // 1. Lưu vào Database trước 
+        // gameDAO.saveGameHistory(currentUser, mode, score, isWin ? 1 : 0, secondsElapsed);
+
+        // 2. Hiện Popup kết quả
+        ResultDialog dialog = new ResultDialog((Frame) SwingUtilities.getWindowAncestor(this), 
+                                            status, score, secondsElapsed, currentTurn);
+        dialog.setVisible(true);
+
+        // 3. Xử lý lựa chọn của người chơi
+        if (dialog.isRetry()) {
+            resetGame(); 
+        } else {
+            mainframe.showScreen("Welcome");
+        }
+    }
+ */
 }

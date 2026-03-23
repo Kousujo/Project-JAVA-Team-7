@@ -48,6 +48,7 @@ public class ModePanel extends JPanel implements ActionListener {
                 g2.dispose();
             }
         };
+        
         modePanel.setOpaque(false);
         modePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 

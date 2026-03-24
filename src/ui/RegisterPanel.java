@@ -8,6 +8,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+// TODO: HOÀN THÀNH LOGIC
+// import logic.AuthService;
+
 public class RegisterPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private JTextField txtUsername;
@@ -31,7 +34,7 @@ public class RegisterPanel extends JPanel implements ActionListener {
         gbc.weighty = 0.2;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.insets = new Insets(90, 0, 0, 0); 
-        add(lblTitle, gbc);
+        add(lblTitle, gbc);     
 
         JPanel glassCard = new JPanel(new GridLayout(3, 1, 0, 15)) { 
             @Override
@@ -144,17 +147,38 @@ public class RegisterPanel extends JPanel implements ActionListener {
             mainframe.showScreen("Login");
         }
         if (e.getSource() == btnRegister) {
+            String username = txtUsername.getText();
             String pass = new String(txtPassword.getPassword());
             String confirm = new String(txtConfirmPassword.getPassword());
 
-            // TODO: Kết nối GameDatabase
-            
-            if (pass.equals(confirm) && !pass.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Đăng ký thành công!");
-                mainframe.showScreen("Login");
-            } else {
-                JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
+            if (username.isEmpty() || pass.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng điền đầy đủ thông tin!");
+                return;
             }
+
+            if (!pass.equals(confirm)) {
+                JOptionPane.showMessageDialog(this, "Mật khẩu xác nhận không khớp!");
+                return;
+            }
+
+            // TODO: HOÀN THÀNH AuthService
+            /*
+            AuthService auth = new AuthService();
+            int result = auth.register(username, pass); // 1 = Thành công, 0 = Trùng tên, -1 = Lỗi SQL
+            
+            if (result == 1) {
+                JOptionPane.showMessageDialog(this, "Đăng ký thành công! Hãy đăng nhập nhé.");
+                mainframe.showScreen("Login");
+                clearFields(); 
+            } else if (result == 0) {
+                JOptionPane.showMessageDialog(this, "Tên đăng nhập đã tồn tại!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Có lỗi xảy ra, vui lòng thử lại!");
+            }
+            */
+        
+            JOptionPane.showMessageDialog(this, "Đăng ký thành công! (Bản Demo)");
+            mainframe.showScreen("Login");
         }
     }
 }

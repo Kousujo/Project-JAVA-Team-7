@@ -7,6 +7,9 @@ import component.MultiLineOutlineLabel;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+// TODO: HOÀN THÀNH LOGIC/DATABASE
+// import logic.GameService;
+// import database.GameDAO;
 
 public class WelcomePanel extends JPanel implements ActionListener {
     private MainFrame mainframe; 
@@ -159,6 +162,32 @@ public class WelcomePanel extends JPanel implements ActionListener {
         btnLeaderboard.addActionListener(this);
     }
 
+    /**
+     * Hàm làm mới trạng thái người chơi. 
+     * gọi hàm này sau khi Đăng nhập thành công.
+     * mainframe.getWelcomePanel().refreshStatus()
+     */
+    public void refreshStatus() {
+        // TODO: MỞ CODE DƯỚI ĐÂY KHI CÓ GAME_DAO VÀ SESSION TRONG MAINFRAME
+        /*
+        String currentUser = mainframe.getCurrentUser(); 
+        if (currentUser != null) {
+            GameDAO dao = new GameDAO();
+            
+            1. Cập nhật tên hiển thị
+            lblname.setText("👤 Người chơi: " + currentUser);
+            
+            2. Lấy điểm cao từ DB
+            int highScore = dao.getHighScore(currentUser); 
+            lblscore.setText("⭐ Điểm cao: " + highScore);
+            
+            3. Kiểm tra xem có trận đấu nào đang dang dở không (Bảng CurrentGame)
+            boolean hasSavedGame = dao.hasSavedGame(currentUser);
+            btnContinue.setEnabled(hasSavedGame);
+        }
+        */
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -179,7 +208,14 @@ public class WelcomePanel extends JPanel implements ActionListener {
             mainframe.showScreen("Mode");
         }
         if (e.getSource() == btnContinue) {
-            // TODO: Kết nối GameDatabase
+            // TODO: Code tiếp tục ván đấu cũ
+            /*
+            String currentUser = mainframe.getCurrentUser();
+            GameDAO dao = new GameDAO();
+            Object[] saveData = dao.loadSavedGame(currentUser);
+            mainframe.getEasyGamePanel().resumeGame(saveData);
+            mainframe.showScreen("Easy");
+            */
         }
         if (e.getSource() == btnAccounts) {
             mainframe.showScreen("Login");

@@ -9,6 +9,10 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
+// TODO: HOÀN THÀNH LOGIC/DATABASE  
+// import logic.GameService;
+// import database.GameDAO;
+
 public class EasyGamePanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
@@ -21,9 +25,10 @@ public class EasyGamePanel extends JPanel implements ActionListener {
     
     private int secondsElapsed = 0;
     private int currentTurn = 0;
-    private final int MAX_TURNS = 5;
+    private int maxTurns = 5;
+    private int score = 0;
     
-    private int[] targetNumbers = {7, 15, 32, 48}; 
+    private int[] targetNumbers = {0, 0, 0, 0}; 
 
     public EasyGamePanel(MainFrame frame) {
         this.mainframe = frame;
@@ -156,11 +161,37 @@ public class EasyGamePanel extends JPanel implements ActionListener {
             secondsElapsed++;
             lblTime.setText("[ " + secondsElapsed + "s ]");
         });
-        gameTimer.start();
 
         btnGuess.addActionListener(this);
         btnHint.addActionListener(this);
         btnBack.addActionListener(this);
+    }
+
+    public void initNewGame(String mode) {
+        this.currentTurn = 0;
+        this.secondsElapsed = 0;
+        this.score = 0;
+        
+        if(mode.equals("EASY")) { maxTurns = 8; lblSubtitle.setText("Nhập số (1-50)"); }
+        else if(mode.equals("NORMAL")) { maxTurns = 6; lblSubtitle.setText("Nhập số (1-100)"); }
+        else { maxTurns = 5; lblSubtitle.setText("Nhập số (1-200)"); }
+
+        lblTurn.setText("Lượt: 0/" + maxTurns);
+        lblTime.setText("[ 0s ]");
+        historyBox.removeAll();
+        txtInput.setText("");
+
+        for (JLabel box : digitBoxes) {
+            box.setText("?");
+            box.setBackground(new Color(255, 255, 255, 100));
+            box.setForeground(Color.BLACK);
+        }
+
+        // TODO: Gọi GameService.generateTarget(mode)
+        java.util.Random r = new java.util.Random();
+        for (int i = 0; i < 4; i++) targetNumbers[i] = r.nextInt(50) + 1;
+
+        gameTimer.restart();
     }
 
     private void addHistoryRow(String text) {
@@ -188,7 +219,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
 
         int guessValue = Integer.parseInt(input);
         currentTurn++;
-        lblTurn.setText("Bạn đã đoán " + currentTurn + " lần. Còn lại " + (MAX_TURNS - currentTurn) + " lượt.");
+        lblTurn.setText("Bạn đã đoán " + currentTurn + " lần. Còn lại " + (maxTurns - currentTurn) + " lượt.");
         
         // LOGIC WORDLE STYLE TẠM THỜI
         boolean found = false;
@@ -205,7 +236,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         addHistoryRow("Lượt " + currentTurn + ": [" + guessValue + "] -> " + resultMsg);
         txtInput.setText("");
 
-        if (currentTurn >= MAX_TURNS) {
+        if (currentTurn >= maxTurns) {
             gameTimer.stop();
             JOptionPane.showMessageDialog(this, "Hết lượt! Trò chơi kết thúc.");
             mainframe.showScreen("Welcome");

@@ -1,20 +1,23 @@
 package ui;
 
 import com.formdev.flatlaf.FlatClientProperties;
-
 import component.MultiLineOutlineLabel;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Vector;
+
+// TODO: HOÀN THÀNH DATABASE
+// import database.GameDAO;
 
 public class LeaderboardPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
     private JButton btnBack;
     private JTable table;
+    private DefaultTableModel model;
 
     public LeaderboardPanel(MainFrame frame) {
         this.mainframe = frame;
@@ -45,17 +48,9 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         glassCard.setOpaque(false);
         glassCard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        //DEMO
+        // KHỞI TẠO MODEL TRỐNG
         String[] columns = {"HẠNG", "NGƯỜI CHƠI", "ĐIỂM", "CHẾ ĐỘ"};
-        Object[][] data = {
-            {"1", "Kousujo", "999", "HARD"},
-            {"2", "Merlin", "850", "NORMAL"},
-            {"3", "Team 7", "720", "HARD"},
-            {"4", "Unknown", "500", "EASY"},
-            {"5", "JavaMaster", "400", "NORMAL"}
-        };
-
-        DefaultTableModel model = new DefaultTableModel(data, columns) {
+        model = new DefaultTableModel(null, columns) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
         };
@@ -67,7 +62,10 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         table.setShowGrid(false);
         table.setOpaque(false);
         
-        // Bắt sự kiện click chuột vào bảng
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -78,10 +76,6 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
                 }
             }
         });
-
-        ((DefaultTableCellRenderer)table.getDefaultRenderer(Object.class)).setOpaque(false);
-        table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(new Color(255, 255, 255, 50));
 
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setOpaque(false);
@@ -96,7 +90,6 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         gbc.insets = new Insets(0, 90, 30, 90);
         add(glassCard, gbc);
 
-        // 3. NÚT BACK
         btnBack = new JButton("BACK TO MENU");
         btnBack.setFont(new Font("SansSerif", Font.BOLD, 22));
         btnBack.setPreferredSize(new Dimension(220, 60));
@@ -109,24 +102,47 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         add(btnBack, gbc);
 
         btnBack.addActionListener(this);
+        
+        // LOAD DỮ LIỆU LẦN ĐẦU (TẠM THỜI DÙNG DEMO)
+        loadDemoData();
     }
 
-    // --- HÀM HIỂN THỊ THÔNG SỐ NGƯỜI CHƠI (POPUP) ---
-    private void showPlayerStats(String name) {
-        // Tạo một Dialog con
-        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), "Thông số người chơi", true);
-        dialog.setUndecorated(true); // Bỏ khung Windows mặc định để tự vẽ
-        dialog.setBackground(new Color(0, 0, 0, 0)); // Làm nền dialog trong suốt
+        private void loadDemoData() {
+        Object[][] demo = {
+            {"1", "Kousujo", "999", "HARD"},
+            {"2", "Merlin", "850", "NORMAL"},
+            {"3", "Team 7", "720", "HARD"},
+            {"4", "Unknown", "500", "EASY"},
+            {"5", "JavaMaster", "400", "NORMAL"}
+        };
+        for (Object[] row : demo) model.addRow(row);
+    }
+    
+    /**
+     * Hàm làm mới bảng từ Database thật
+     */
+    public void refreshTable() {
+        // TODO: HOÀN THÀNH DATABASE
+        /*
+        GameDAO dao = new GameDAO();
+        Vector<Vector<Object>> data = dao.getTopPlayers();
+        model.setDataVector(data, new Vector<>(java.util.Arrays.asList("HẠNG", "NGƯỜI CHƠI", "ĐIỂM", "CHẾ ĐỘ")));
+        */
+    }
 
-        // Panel chứa nội dung theo style Glass
+    private void showPlayerStats(String name) {
+        JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
+        dialog.setUndecorated(true);
+        dialog.setBackground(new Color(0, 0, 0, 0));
+
         JPanel content = new JPanel(new GridLayout(4, 1, 10, 10)) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(255, 255, 255, 240)); // Nền trắng đục hơn để dễ đọc
+                g2.setColor(new Color(255, 255, 255, 245));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-                g2.setColor(new Color(70, 130, 180)); // Viền màu xanh thép
+                g2.setColor(new Color(70, 130, 180));
                 g2.setStroke(new BasicStroke(3));
                 g2.drawRoundRect(1, 1, getWidth()-3, getHeight()-3, 30, 30);
                 g2.dispose();
@@ -134,10 +150,9 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         };
         content.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        // Dữ liệu ảo (Sau này lấy từ GameDataBase.java)
+        // TODO: Gọi DAO để lấy chỉ số thật của 'name'
         JLabel lblName = new JLabel("Người chơi: " + name, SwingConstants.CENTER);
         lblName.setFont(new Font("SansSerif", Font.BOLD, 18));
-        
         JLabel lblWinRate = new JLabel("📊 Tỷ lệ thắng: 65%", SwingConstants.LEFT);
         JLabel lblTotalWins = new JLabel("🏆 Số game thắng: 42 ván", SwingConstants.LEFT);
         JLabel lblStreak = new JLabel("🔥 Chuỗi thắng tốt nhất: 5 ván", SwingConstants.LEFT);
@@ -145,17 +160,12 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         Font statFont = new Font("SansSerif", Font.PLAIN, 16);
         lblWinRate.setFont(statFont); lblTotalWins.setFont(statFont); lblStreak.setFont(statFont);
 
-        content.add(lblName);
-        content.add(lblWinRate);
-        content.add(lblTotalWins);
-        content.add(lblStreak);
+        content.add(lblName); content.add(lblWinRate);
+        content.add(lblTotalWins); content.add(lblStreak);
 
-        // Click vào popup để đóng
         dialog.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                dialog.dispose();
-            }
+            public void mouseClicked(MouseEvent e) { dialog.dispose(); }
         });
 
         dialog.add(content);
@@ -177,8 +187,6 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnBack) {
-            mainframe.showScreen("Welcome");
-        }
+        if (e.getSource() == btnBack) mainframe.showScreen("Welcome");
     }
 }

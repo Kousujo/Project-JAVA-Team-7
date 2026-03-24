@@ -10,6 +10,15 @@ public class MainFrame extends JFrame implements ActionListener {
     private JMenuBar menuBar;
     private JMenu menuSystem, menuSetting, menuHelp;
     private JMenuItem itemReset, itemExit, itemTheme, itemAbout;
+    private String currentUser = null;
+    private String selectedMode = "EASY";
+    
+    private WelcomePanel welcomePanel;
+    private ModePanel modePanel;
+    private LoginPanel loginPanel;
+    private RegisterPanel registerPanel;
+    private LeaderboardPanel leaderboardPanel;
+    private EasyGamePanel easyGamePanel;
 
     public MainFrame() {
         setTitle("The Chosen Number");
@@ -22,21 +31,49 @@ public class MainFrame extends JFrame implements ActionListener {
         cardLayout = new CardLayout();
         mainPanel = new JPanel(cardLayout);
 
-        WelcomePanel welcomePanel = new WelcomePanel(this);
-        ModePanel modePanel = new ModePanel(this);
-        LoginPanel loginPanel = new LoginPanel(this);
-        RegisterPanel registerPanel = new RegisterPanel(this);
-        LeaderboardPanel leaderboard = new LeaderboardPanel(this);
-        EasyGamePanel easyGamePanel = new EasyGamePanel(this);
+        welcomePanel = new WelcomePanel(this);
+        modePanel = new ModePanel(this);
+        loginPanel = new LoginPanel(this);
+        registerPanel = new RegisterPanel(this);
+        leaderboardPanel = new LeaderboardPanel(this);
+        easyGamePanel = new EasyGamePanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
         mainPanel.add(modePanel, "Mode");
         mainPanel.add(loginPanel, "Login");
         mainPanel.add(registerPanel, "Register");
-        mainPanel.add(leaderboard, "Leaderboard");
+        mainPanel.add(leaderboardPanel, "Leaderboard");
         mainPanel.add(easyGamePanel, "Easy");
 
         add(mainPanel);
+    }
+
+    public String getCurrentUser() { return currentUser; }
+    public void setCurrentUser(String user) { this.currentUser = user; }
+    
+    public WelcomePanel getWelcomePanel() { return welcomePanel; }
+    public EasyGamePanel getEasyGamePanel() { return easyGamePanel; }   
+    
+    public void setSelectedMode(String mode) {
+        this.selectedMode = mode;
+        System.out.println("Đã chọn chế độ: " + mode); 
+    }
+
+    public String getSelectedMode() {
+        return selectedMode;
+    }
+
+    public void startNewGame(String mode) {
+        setSelectedMode(mode);
+        
+        // B. Ra lệnh cho màn hình Game dọn dẹp chiến trường cũ và sinh số mới
+        // Lưu ý: Phải gọi hàm này trước khi showScreen để người chơi vào là thấy mới tinh
+        if (easyGamePanel != null) {
+            easyGamePanel.initNewGame(mode);
+        }
+        
+        // C. Chuyển màn hình sang màn chơi game
+        showScreen("Easy");
     }
 
     private void initMenuBar() {

@@ -8,6 +8,9 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 
+// TODO: HOÀN THÀNH LOGIC
+// import logic.AuthService;
+
 public class LoginPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private JTextField txtUsername;
@@ -138,9 +141,31 @@ public class LoginPanel extends JPanel implements ActionListener {
             mainframe.showScreen("Register");
         }
         if (e.getSource() == btnLogin) {
+            String username = txtUsername.getText();
+            String password = new String(txtPassword.getPassword());
+
+            if (username.isEmpty() || password.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin!");
+                return;
+            }
+
+            // TODO: HOÀN THÀNH AuthService
+            /*
+            AuthService auth = new AuthService();
+            if (auth.login(username, password)) {
+                mainframe.setCurrentUser(username);
+                mainframe.getWelcomePanel().refreshStatus();
+                mainframe.showScreen("Welcome");
+                JOptionPane.showMessageDialog(this, "Chào mừng " + username + " trở lại!");
+            } else {
+                JOptionPane.showMessageDialog(this, "Tài khoản hoặc mật khẩu không chính xác!");
+            }
+            */
+
+            // DELETE
+            mainframe.setCurrentUser(username);
+            mainframe.getWelcomePanel().refreshStatus();
             mainframe.showScreen("Welcome");
-            // TODO: Kết nối GameDatabase
-            JOptionPane.showMessageDialog(this, "Chào mừng bạn trở lại!");
         }
     }
 }

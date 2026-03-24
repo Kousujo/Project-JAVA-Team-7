@@ -126,15 +126,14 @@ public class ModePanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btnStart) {
-            if (rbEasy.isSelected()) {
-                mainframe.showScreen("Easy"); 
-            }
-            else if (rbNormal.isSelected()) {
-                mainframe.showScreen("Normal"); 
-            }
-            else if (rbHard.isSelected()) {
-                mainframe.showScreen("Hard"); 
-            }
+            String selectedMode = "";
+            if (rbEasy.isSelected()) selectedMode = "EASY";
+            else if (rbNormal.isSelected()) selectedMode = "NORMAL";
+            else if (rbHard.isSelected()) selectedMode = "HARD";
+            
+            mainframe.startNewGame(selectedMode);
+            
+            mainframe.showScreen("Easy");
         } else if (e.getSource() == btnBack) {
             mainframe.showScreen("Welcome");
         }

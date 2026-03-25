@@ -122,12 +122,19 @@ public class WelcomePanel extends JPanel implements ActionListener {
 
         btnNewGame.addActionListener(this);
         btnLeaderboard.addActionListener(this);
+
+        refreshStatus(); // Cập nhật thông tin ban đầu khi khởi tạo giao diện
     }
 
-    public void refreshStatus(int localHighScore) {
-        lblscore.setText("⭐ Kỷ lục: " + localHighScore);
+   // Sửa lại hàm trong WelcomePanel.java
+    public void refreshStatus() {
+        // Khởi tạo DAO để lấy dữ liệu
+        database.GameDAO dao = new database.GameDAO();
+        int highscore = dao.getHighestScore();
+        
+        // Cập nhật lên giao diện
+        lblscore.setText("⭐ Kỷ lục: " + highscore);
     }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

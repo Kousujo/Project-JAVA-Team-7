@@ -121,7 +121,7 @@ public class HardGamePanel extends JPanel implements ActionListener {
     }
 
     public void initNewGame(String mode) {
-        engine.startNewGame(); 
+        engine.startNewGame();
         secondsElapsed = 0;
         updateTurnDisplay();
         historyBox.removeAll();
@@ -137,14 +137,11 @@ public class HardGamePanel extends JPanel implements ActionListener {
             return;
         }
 
-        // GỌI ENGINE WORDLE CỦA ÔNG
-        String result = engine.checkWordleGuess(input); 
-        
+        String result = engine.checkWordleGuess(input);
+
         updateTurnDisplay();
-        
-        // Vẽ hàng kết quả Wordle
         addWordleRow(input, result);
-        
+
         txtInput.setText("");
 
         if (engine.isGameOver()) {
@@ -153,13 +150,18 @@ public class HardGamePanel extends JPanel implements ActionListener {
         }
     }
 
-    /**
-     * VẼ HÀNG WORDLE: Quan trọng nhất đây Leader!
-     */
+    private void handleWin() {
+        int score = engine.calculateFinalScore();
+
+        // LƯU VÀO DATABASE
+        database.GameDAO dao = new database.GameDAO();
+        dao.insertGameResult(score, "HARD", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
+    }
+
     private void addWordleRow(String guess, String result) {
         JPanel row = new JPanel(new FlowLayout(FlowLayout.CENTER, 8, 5));
         row.setOpaque(false);
-        
+
         String[] colors = result.split(",");
         char[] numbers = guess.toCharArray();
 
@@ -169,72 +171,74 @@ public class HardGamePanel extends JPanel implements ActionListener {
             box.setPreferredSize(new Dimension(50, 50));
             box.setFont(new Font("SansSerif", Font.BOLD, 22));
             box.setForeground(Color.WHITE);
-            
+
             // Đổ màu theo kết quả Engine trả về
             switch (colors[i]) {
-                case "G": box.setBackground(new Color(46, 204, 113)); break; // Xanh lá
-                case "Y": box.setBackground(new Color(241, 196, 15)); break; // Vàng
-                default:  box.setBackground(new Color(127, 140, 141)); break; // Xám
+                case "G":
+                    box.setBackground(new Color(46, 204, 113));
+                    break; // Xanh lá
+                case "Y":
+                    box.setBackground(new Color(241, 196, 15));
+                    break; // Vàng
+                default:
+                    box.setBackground(new Color(127, 140, 141));
+                    break; // Xám
             }
             row.add(box);
         }
-        
+
         historyBox.add(row);
         historyBox.revalidate();
-        
+
         // Tự động cuộn xuống cuối
         SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = ((JScrollPane)historyBox.getParent().getParent()).getVerticalScrollBar();
+            JScrollBar vertical = ((JScrollPane) historyBox.getParent().getParent()).getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
-    }
-
-    private void endGame(boolean isWin) {
-        gameTimer.stop();
-        
-        // Dùng HTML để JLabel có thể xuống dòng và định dạng số bí mật cho đẹp
-        String statusText;
-        if (isWin) {
-            statusText = "WINNER\n";
-            statusText += engine.getSecretCode();
-        } else {
-            // Lấy số bí mật từ targetNumber của engine
-            // Dùng <html> để xuống dòng <br>
-            statusText = "<html><center>GAME OVER<br><font size='4' color='#333333'>Đáp án: " 
-                        + String.format("%05d", engine.getCurrentScore()) + "</font></center></html>";
-            
-            // LƯU Ý: Nếu engine.getCurrentScore() khi thua trả về 0, 
-            // ông nên tạo 1 hàm getter trong HardModeEngine để lấy targetString gốc nhé!
-        }
-        
-        int finalScore = engine.calculateFinalScore();
-        
-        // TRUYỀN BIẾN statusText VÀO ĐÂY (Thay vì hằng số "DEFEATED")
-        ResultDialog dialog = new ResultDialog(
-            (Frame) SwingUtilities.getWindowAncestor(this), 
-            statusText, 
-            finalScore, 
-            secondsElapsed, 
-            engine.getAttemptsUsed()
-        );
-        
-        dialog.setVisible(true); 
-
-        if (dialog.isRetry()) {
-            initNewGame("HARD"); 
-        } else {
-            mainframe.showScreen("Welcome");
-        }
     }
 
     private void updateTurnDisplay() {
         int used = engine.getAttemptsUsed();
         int max = engine.getMaxAttempts();
         int remaining = max - used;
-        lblTurn.setText("Lượt: " + used + "/" + max + " (Còn: " + remaining + ")");
-        
+
+        lblTurn.setText("Lượt: " + used + "/" + max + " (Còn lại: " + remaining + ")");
+
         float ratio = (float) used / max;
-        lblTurn.setForeground(new Color((int)(255 * ratio), (int)(255 * (1-ratio)), 100));
+        int red = (int) (46 + (231 - 46) * ratio);
+        int green = (int) (204 + (76 - 204) * ratio);
+        int blue = (int) (113 + (60 - 113) * ratio);
+        lblTurn.setForeground(new Color(red, green, blue));
+
+        if (remaining <= 1) {
+            lblTurn.setFont(new Font("SansSerif", Font.ITALIC | Font.BOLD, 20));
+        } else {
+            lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
+        }
+    }
+
+    private void endGame(boolean isWin) {
+        String status = isWin ? "WINNER" : "GAME OVER";
+        int finalScore = engine.calculateFinalScore();
+
+        ResultDialog dialog = new ResultDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this),
+            status,
+            finalScore,
+            secondsElapsed,
+            engine.getAttemptsUsed()
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isRetry()) {
+            initNewGame(mainframe.getSelectedMode());
+        } else {
+            mainframe.showScreen("Welcome");
+        }
+
+        if (isWin) {
+            handleWin();
+        } 
     }
 
     @Override

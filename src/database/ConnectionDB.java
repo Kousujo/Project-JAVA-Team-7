@@ -9,7 +9,7 @@ public class ConnectionDB {
 
     static {
         ds.setUser("sa");
-        ds.setPassword("123456");
+        ds.setPassword("100407");
         ds.setServerName("ADMIN-Kousujo");
         ds.setPortNumber(1433);
         ds.setDatabaseName("..."); 

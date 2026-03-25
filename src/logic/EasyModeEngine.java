@@ -36,6 +36,6 @@ public class EasyModeEngine extends AbstractGameEngine {
     @Override
     public int calculateFinalScore() {
         if (!isWin) return 0;
-        return (6 - attemptsUsed) * 200;
+        return (10 - attemptsUsed ) * 100;
     }
 }

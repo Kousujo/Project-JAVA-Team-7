@@ -16,6 +16,8 @@ public class MainFrame extends JFrame implements ActionListener {
     private ModePanel modePanel;
     private LeaderboardPanel leaderboardPanel;
     private EasyGamePanel easyGamePanel;
+    private NormalGamePanel normalGamePanel;
+    private HardGamePanel hardGamePanel;
 
     public MainFrame() {
         setTitle("The Chosen Number");
@@ -32,11 +34,15 @@ public class MainFrame extends JFrame implements ActionListener {
         modePanel = new ModePanel(this);
         leaderboardPanel = new LeaderboardPanel(this);
         easyGamePanel = new EasyGamePanel(this);
+        normalGamePanel = new NormalGamePanel(this);
+        hardGamePanel = new HardGamePanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
         mainPanel.add(modePanel, "Mode");
         mainPanel.add(leaderboardPanel, "Leaderboard");
         mainPanel.add(easyGamePanel, "Easy");
+        mainPanel.add(normalGamePanel, "Normal");
+        mainPanel.add(hardGamePanel, "Hard");
 
         add(mainPanel);
 
@@ -52,9 +58,31 @@ public class MainFrame extends JFrame implements ActionListener {
     }
 
     public void startNewGame(String mode) {
-        this.selectedMode = mode;
-        easyGamePanel.initNewGame(mode);
-        showScreen("Easy");
+        this.selectedMode = mode; 
+        
+        switch (mode) {
+            case "EASY":
+                easyGamePanel.initNewGame(mode);
+                showScreen("Easy");
+                break;
+                
+            case "NORMAL":
+                // Khởi tạo logic cho bản Vừa (MediumModeEngine) và chuyển màn hình
+                normalGamePanel.initNewGame(mode);
+                showScreen("Normal");
+                break;
+                
+            case "HARD":
+                hardGamePanel.initNewGame(mode);
+                showScreen("Hard");
+                break;
+                
+            default:
+                showScreen("Welcome");
+                break;
+        }
+        
+        System.out.println("Hệ thống: Bắt đầu trận đấu mới - Chế độ: " + mode);
     }
 
     private void initMenuBar() {

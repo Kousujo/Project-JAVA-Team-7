@@ -9,10 +9,10 @@ public class ConnectionDB {
 
     static {
         ds.setUser("sa");
-        ds.setPassword("123456");
-        ds.setServerName("ADMIN-Kousujo");
+        ds.setPassword("100407");
+        ds.setServerName("Admin\\SQLEXPRESS");
         ds.setPortNumber(1433);
-        ds.setDatabaseName("..."); 
+        ds.setDatabaseName("the_chosen_number"); 
         ds.setEncrypt(false);
         ds.setTrustServerCertificate(true);
     }

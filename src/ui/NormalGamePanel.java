@@ -184,20 +184,19 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         }
 
         int guess = Integer.parseInt(input);
-        String result = engine.checkGuess(guess); 
-        
+        String result = engine.checkGuess(guess);
+
         updateTurnDisplay();
 
         // Xử lý tách chuỗi gợi ý dựa trên dấu "|"
         String[] hints = result.split("\\|");
-        
+
         if (hints.length == 2) {
             updateFeedback(lblFeedbackLeft, hints[0]);
             updateFeedback(lblFeedbackRight, hints[1]);
         }
 
-        // Cập nhật trạng thái Bonus nếu có (Dùng Reflection hoặc ép kiểu để check field hasBonus)
-        // Ở đây ta đơn giản hóa bằng cách check màu sắc nếu MATCH
+        // Cập nhật trạng thái Bonus nếu có
         if (lblFeedbackLeft.getText().equals("MATCH") || lblFeedbackRight.getText().equals("MATCH")) {
             if (engine.getAttemptsUsed() <= 5) {
                 lblBonus.setText("BONUS ACTIVE! 🔥");
@@ -214,10 +213,19 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         }
     }
 
+    private void handleWin() {
+        int score = engine.calculateFinalScore();
+
+        // LƯU VÀO DATABASE
+        database.GameDAO dao = new database.GameDAO();
+        dao.insertGameResult(score, "NORMAL", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
+    }
+
     private void updateFeedback(JLabel lbl, String hint) {
         lbl.setText(hint);
         switch (hint) {
-            case "MATCH": case "MATCH!":
+            case "MATCH":
+            case "MATCH!":
                 lbl.setForeground(new Color(46, 204, 113));
                 break;
             case "UP":
@@ -231,25 +239,14 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         }
     }
 
-    private void endGame(boolean isWin) {
-        String status = isWin ? "WINNER" : "GAME OVER";
-        ResultDialog dialog = new ResultDialog(
-            (Frame) SwingUtilities.getWindowAncestor(this), 
-            status, engine.calculateFinalScore(), secondsElapsed, engine.getAttemptsUsed()
-        );
-        dialog.setVisible(true); 
-        if (dialog.isRetry()) initNewGame("NORMAL"); 
-        else mainframe.showScreen("Welcome");
-    }
-
     private void addHistoryRow(String text) {
         JLabel lbl = new JLabel(text);
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 15));
+        lbl.setFont(new Font("SansSerif", Font.BOLD, 16));
         lbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         historyBox.add(lbl);
         historyBox.revalidate();
         SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = ((JScrollPane)historyBox.getParent().getParent()).getVerticalScrollBar();
+            JScrollBar vertical = ((JScrollPane) historyBox.getParent().getParent()).getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
     }
@@ -257,7 +254,7 @@ public class NormalGamePanel extends JPanel implements ActionListener {
     private void updateTurnDisplay() {
         int used = engine.getAttemptsUsed();
         int max = engine.getMaxAttempts();
-        int remaining = max - used; 
+        int remaining = max - used;
 
         lblTurn.setText("Lượt: " + used + "/" + max + " (Còn lại: " + remaining + ")");
 
@@ -272,6 +269,30 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         } else {
             lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
         }
+    }
+
+    private void endGame(boolean isWin) {
+        String status = isWin ? "WINNER" : "GAME OVER";
+        int finalScore = engine.calculateFinalScore();
+
+        ResultDialog dialog = new ResultDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this),
+            status,
+            finalScore,
+            secondsElapsed,
+            engine.getAttemptsUsed()
+        );
+        dialog.setVisible(true);
+
+        if (dialog.isRetry()) {
+            initNewGame(mainframe.getSelectedMode());
+        } else {
+            mainframe.showScreen("Welcome");
+        }
+
+        if (isWin) {
+            handleWin();
+        } 
     }
 
     @Override

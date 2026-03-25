@@ -26,4 +26,6 @@ public abstract class AbstractGameEngine {
     public int getAttemptsUsed() { return attemptsUsed; }
     public int getMaxAttempts() { return maxAttempts; }
     public int getCurrentScore() { return currentScore; }
+    public int getTargetNumber() { return targetNumber; }
+    
 }

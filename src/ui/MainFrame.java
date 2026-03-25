@@ -49,9 +49,15 @@ public class MainFrame extends JFrame implements ActionListener {
         showScreen("Welcome");
     }  
 
-    public void showScreen(String name) {
-        cardLayout.show(mainPanel, name);
-    }   
+    public void showScreen(String screenName) {
+        if (screenName.equals("Leaderboard")) {
+            leaderboardPanel.refreshData(); // Làm mới bảng xếp hạng trước khi hiện
+        } else if (screenName.equals("Welcome")) {
+            welcomePanel.refreshStatus(); // Làm mới kỷ lục cá nhân ở màn hình chính
+        }
+        
+        cardLayout.show(mainPanel, screenName);
+    }  
 
     public String getSelectedMode() {
         return selectedMode;

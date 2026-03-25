@@ -153,11 +153,13 @@ public class EasyGamePanel extends JPanel implements ActionListener {
 
     private void handleGuess() {
         String input = txtInput.getText().trim();
-        if (!input.matches("\\d+")) return;
+        if (!input.matches("\\d+")) {
+            return;
+        }
 
         int guess = Integer.parseInt(input);
-        String result = engine.checkGuess(guess); 
-        
+        String result = engine.checkGuess(guess);
+
         updateTurnDisplay();
         addHistoryRow("Lượt " + engine.getAttemptsUsed() + ": [" + guess + "] -> " + result);
 
@@ -180,26 +182,12 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         }
     }
 
-    private void endGame(boolean isWin) {
-        String status = isWin ? "WINNER" : "GAME OVER";
-        int finalScore = engine.calculateFinalScore();
-        
-        // Kết quả Dialog
-        ResultDialog dialog = new ResultDialog(
-            (Frame) SwingUtilities.getWindowAncestor(this), 
-            status, 
-            finalScore, 
-            secondsElapsed, 
-            engine.getAttemptsUsed()
-        );
-        
-        dialog.setVisible(true); 
+    private void handleWin() {
+        int score = engine.calculateFinalScore();
 
-        if (dialog.isRetry()) {
-            initNewGame(mainframe.getSelectedMode()); 
-        } else {
-            mainframe.showScreen("Welcome");
-        }
+        // LƯU VÀO DATABASE
+        database.GameDAO dao = new database.GameDAO();
+        dao.insertGameResult(score, "EASY", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
     }
 
     private void addHistoryRow(String text) {
@@ -209,7 +197,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         historyBox.add(lbl);
         historyBox.revalidate();
         SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = ((JScrollPane)historyBox.getParent().getParent()).getVerticalScrollBar();
+            JScrollBar vertical = ((JScrollPane) historyBox.getParent().getParent()).getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
     }
@@ -222,13 +210,11 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         lblTurn.setText("Lượt: " + used + "/" + max + " (Còn lại: " + remaining + ")");
 
         float ratio = (float) used / max;
-
         int red = (int) (46 + (231 - 46) * ratio);
         int green = (int) (204 + (76 - 204) * ratio);
         int blue = (int) (113 + (60 - 113) * ratio);
-
         Color dynamicColor = new Color(red, green, blue);
-        
+
         lblTurn.setForeground(dynamicColor);
 
         if (remaining <= 1) {
@@ -237,6 +223,32 @@ public class EasyGamePanel extends JPanel implements ActionListener {
             lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
         }
     }
+
+    private void endGame(boolean isWin) {
+        String status = isWin ? "WINNER" : "GAME OVER";
+        int finalScore = engine.calculateFinalScore();
+
+        ResultDialog dialog = new ResultDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this),
+            status,
+            finalScore,
+            secondsElapsed,
+            engine.getAttemptsUsed()
+        );
+
+        dialog.setVisible(true);
+
+        if (dialog.isRetry()) {
+            initNewGame(mainframe.getSelectedMode());
+        } else {
+            mainframe.showScreen("Welcome");
+        }
+
+        if (isWin) {
+            handleWin();
+        } 
+    }
+    
 
     @Override
     public void actionPerformed(ActionEvent e) {

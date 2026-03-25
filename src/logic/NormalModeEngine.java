@@ -40,7 +40,7 @@ public class NormalModeEngine extends AbstractGameEngine {
             currentScore = calculateFinalScore();
             return "MATCH!|MATCH!";
         } 
-        
+
         if (attemptsUsed >= maxAttempts) {
             isGameOver = true;
             currentScore = 0;

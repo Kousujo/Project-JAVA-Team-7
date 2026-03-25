@@ -1,6 +1,6 @@
 package logic;
 
-public class MediumModeEngine extends AbstractGameEngine {
+public class NormalModeEngine extends AbstractGameEngine {
     private boolean hasBonus; // Cờ đánh dấu đã nhận thưởng chưa
 
     @Override

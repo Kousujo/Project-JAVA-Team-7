@@ -1,3 +1,4 @@
+package logic;
 
 public class HardModeEngine extends AbstractGameEngine {
     private String targetString; // Dùng chuỗi thay vì số nguyên để dễ xử lý 5 chữ số (kể cả số 0 đứng đầu)
@@ -40,7 +41,7 @@ public class HardModeEngine extends AbstractGameEngine {
         return evaluateColors(guess);
     }
 
-   
+
     private String evaluateColors(String guess) {
         char[] targetChars = targetString.toCharArray();
         char[] guessChars = guess.toCharArray();
@@ -71,6 +72,10 @@ public class HardModeEngine extends AbstractGameEngine {
 
         // Nối mảng kết quả thành chuỗi cách nhau bởi dấu phẩy
         return result[0] + "," + result[1] + "," + result[2] + "," + result[3] + "," + result[4];
+    }
+
+    public String getSecretCode() {
+        return targetString;
     }
 
     @Override

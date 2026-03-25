@@ -1,12 +1,12 @@
-
+package logic;
 
 public class EasyModeEngine extends AbstractGameEngine {
 
     @Override
     public void startNewGame() {
-        this.targetNumber = random.nextInt(101); // 0 đến 100
+        this.targetNumber = random.nextInt(101);
         this.attemptsUsed = 0; 
-        this.maxAttempts = 5;
+        this.maxAttempts = 10;
         this.isGameOver = false;
         this.isWin = false;
         this.currentScore = 0;

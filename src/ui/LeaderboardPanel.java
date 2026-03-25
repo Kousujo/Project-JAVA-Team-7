@@ -1,16 +1,12 @@
 package ui;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import component.MultiLineOutlineLabel;
+import graphic.MultiLineOutlineLabel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Vector;
-
-// TODO: HOÀN THÀNH DATABASE
-// import database.GameDAO;
 
 public class LeaderboardPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
@@ -48,8 +44,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         glassCard.setOpaque(false);
         glassCard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // KHỞI TẠO MODEL TRỐNG
-        String[] columns = {"HẠNG", "NGƯỜI CHƠI", "ĐIỂM", "CHẾ ĐỘ"};
+        String[] columns = {"HẠNG", "ĐIỂM", "CHẾ ĐỘ", "TIME_HIDDEN", "TURNS_HIDDEN", "SECRET_HIDDEN"};
         model = new DefaultTableModel(null, columns) {
             @Override
             public boolean isCellEditable(int row, int column) { return false; }
@@ -62,6 +57,10 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         table.setShowGrid(false);
         table.setOpaque(false);
         
+        table.removeColumn(table.getColumnModel().getColumn(5)); // Secret
+        table.removeColumn(table.getColumnModel().getColumn(4)); // Turns
+        table.removeColumn(table.getColumnModel().getColumn(3)); // Time
+        
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -71,8 +70,13 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
             public void mouseClicked(MouseEvent e) {
                 int row = table.getSelectedRow();
                 if (row != -1) {
-                    String playerName = table.getValueAt(row, 1).toString();
-                    showPlayerStats(playerName);
+                    int score = (int) model.getValueAt(row, 1);
+                    String mode = model.getValueAt(row, 2).toString();
+                    int time = (int) model.getValueAt(row, 3);
+                    int turns = (int) model.getValueAt(row, 4);
+                    int secret = (int) model.getValueAt(row, 5);
+                    
+                    showPlayerStats(score, mode, time, turns, secret);
                 }
             }
         });
@@ -95,42 +99,30 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         btnBack.setPreferredSize(new Dimension(220, 60));
         btnBack.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
         
-        gbc.gridy = 2;
-        gbc.weighty = 0.2;
+        gbc.gridy = 2; gbc.weighty = 0.2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 0, 55, 0);
         add(btnBack, gbc);
 
         btnBack.addActionListener(this);
         
-        // LOAD DỮ LIỆU LẦN ĐẦU (TẠM THỜI DÙNG DEMO)
         loadDemoData();
     }
 
-        private void loadDemoData() {
+    private void loadDemoData() {
+        model.setRowCount(0); 
         Object[][] demo = {
-            {"1", "Kousujo", "999", "HARD"},
-            {"2", "Merlin", "850", "NORMAL"},
-            {"3", "Team 7", "720", "HARD"},
-            {"4", "Unknown", "500", "EASY"},
-            {"5", "JavaMaster", "400", "NORMAL"}
+            {"1", 999, "HARD", 15, 3, 42},
+            {"2", 850, "NORMAL", 25, 4, 77},
+            {"3", 720, "HARD", 45, 5, 12},
+            {"4", 500, "EASY", 10, 2, 8},
+            {"5", 400, "NORMAL", 55, 5, 99}
         };
         for (Object[] row : demo) model.addRow(row);
     }
-    
-    /**
-     * Hàm làm mới bảng từ Database thật
-     */
-    public void refreshTable() {
-        // TODO: HOÀN THÀNH DATABASE
-        /*
-        GameDAO dao = new GameDAO();
-        Vector<Vector<Object>> data = dao.getTopPlayers();
-        model.setDataVector(data, new Vector<>(java.util.Arrays.asList("HẠNG", "NGƯỜI CHƠI", "ĐIỂM", "CHẾ ĐỘ")));
-        */
-    }
 
-    private void showPlayerStats(String name) {
+    // Cập nhật hàm hiện Popup: Hiện số lượt, thời gian, số bí mật
+    private void showPlayerStats(int score, String mode, int time, int turns, int secret) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
         dialog.setUndecorated(true);
         dialog.setBackground(new Color(0, 0, 0, 0));
@@ -150,18 +142,21 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         };
         content.setBorder(BorderFactory.createEmptyBorder(20, 30, 20, 30));
 
-        // TODO: Gọi DAO để lấy chỉ số thật của 'name'
-        JLabel lblName = new JLabel("Người chơi: " + name, SwingConstants.CENTER);
-        lblName.setFont(new Font("SansSerif", Font.BOLD, 18));
-        JLabel lblWinRate = new JLabel("📊 Tỷ lệ thắng: 65%", SwingConstants.LEFT);
-        JLabel lblTotalWins = new JLabel("🏆 Số game thắng: 42 ván", SwingConstants.LEFT);
-        JLabel lblStreak = new JLabel("🔥 Chuỗi thắng tốt nhất: 5 ván", SwingConstants.LEFT);
+        JLabel lblTitle = new JLabel("CHI TIẾT TRẬN ĐẤU", SwingConstants.CENTER);
+        lblTitle.setFont(new Font("SansSerif", Font.BOLD, 20));
+        lblTitle.setForeground(new Color(70, 130, 180));
+
+        JLabel lblTurns = new JLabel("🎯 Số lượt đoán: " + turns, SwingConstants.LEFT);
+        JLabel lblTime = new JLabel("⏱ Thời gian: " + time + "s", SwingConstants.LEFT);
+        JLabel lblSecret = new JLabel("🔑 Số bí mật: " + secret, SwingConstants.LEFT);
         
         Font statFont = new Font("SansSerif", Font.PLAIN, 16);
-        lblWinRate.setFont(statFont); lblTotalWins.setFont(statFont); lblStreak.setFont(statFont);
+        lblTurns.setFont(statFont); lblTime.setFont(statFont); lblSecret.setFont(statFont);
 
-        content.add(lblName); content.add(lblWinRate);
-        content.add(lblTotalWins); content.add(lblStreak);
+        content.add(lblTitle);
+        content.add(lblTurns);
+        content.add(lblTime);
+        content.add(lblSecret);
 
         dialog.addMouseListener(new MouseAdapter() {
             @Override
@@ -178,10 +173,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-        g2d.setColor(new Color(0, 0, 0, 15)); 
-        g2d.fillRect(0, 0, getWidth(), getHeight());
         g2d.dispose();
     }
 

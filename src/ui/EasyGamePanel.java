@@ -1,43 +1,33 @@
 package ui;
 
 import com.formdev.flatlaf.FlatClientProperties;
-
-import component.MultiLineOutlineLabel;
-
+import graphic.MultiLineOutlineLabel;
+import logic.EasyModeEngine;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.LineBorder;
-
-// TODO: HOÀN THÀNH LOGIC/DATABASE  
-// import logic.GameService;
-// import database.GameDAO;
 
 public class EasyGamePanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
-    private JPanel historyBox, digitPanel;
+    private JPanel historyBox;
     private JTextField txtInput;
-    private JButton btnGuess, btnHint, btnBack;
-    private JLabel lblTurn, lblTime, lblSubtitle;
-    private JLabel[] digitBoxes; 
+    private JButton btnGuess, btnBack;
+    private JLabel lblTurn, lblTime, lblFeedback; 
     private Timer gameTimer;
     
     private int secondsElapsed = 0;
-    private int currentTurn = 0;
-    private int maxTurns = 5;
-    private int score = 0;
-    
-    private int[] targetNumbers = {0, 0, 0, 0}; 
+    private EasyModeEngine engine; 
 
     public EasyGamePanel(MainFrame frame) {
         this.mainframe = frame;
+        this.engine = new EasyModeEngine(); 
         backgroundImage = new ImageIcon("res/Toy.png").getImage();
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-
-        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("CLASSIC", SwingConstants.CENTER);
+        // 1. TIÊU ĐỀ
+        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("GUESS IT", SwingConstants.CENTER);
         lblModeName.setFont(new Font("SansSerif", Font.BOLD, 70)); 
         lblModeName.setForeground(new Color(255, 215, 0));
         lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
@@ -45,48 +35,45 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         gbc.insets = new Insets(50, 0, 0, 0);
         add(lblModeName, gbc);
 
-        lblSubtitle = new JLabel("Nhập số (1-50)");
-        lblSubtitle.setFont(new Font("SansSerif", Font.ITALIC, 20));
-        lblSubtitle.setForeground(Color.WHITE);
-        gbc.gridy = 1; gbc.weighty = 0.02;
-        gbc.insets = new Insets(-10, 0, 5, 0); 
-        add(lblSubtitle, gbc);
-
-        
+        // 2. PANEL THÔNG SỐ
         JPanel statsPanel = new JPanel(new BorderLayout());
         statsPanel.setOpaque(false);
-        lblTurn = new JLabel("Bạn đã đoán 0 lần. Còn lại 5 lượt.");
-        lblTurn.setForeground(Color.WHITE);
-        lblTurn.setFont(new Font("SansSerif", Font.BOLD, 16));
+        lblTurn = new JLabel();
+        lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
         lblTime = new JLabel("[ 0s ]");
-        lblTime.setForeground(Color.WHITE);
+        lblTime.setForeground(Color.BLUE);
         lblTime.setFont(new Font("SansSerif", Font.BOLD, 18));
         statsPanel.add(lblTurn, BorderLayout.WEST);
         statsPanel.add(lblTime, BorderLayout.EAST);
 
-        gbc.gridy = 2; gbc.weighty = 0.03;
+        gbc.gridy = 1; gbc.weighty = 0.05;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 85, 10, 85);
         add(statsPanel, gbc);
 
-        digitPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        digitPanel.setOpaque(false);
-        digitBoxes = new JLabel[4];
-        for (int i = 0; i < 4; i++) {
-            digitBoxes[i] = new JLabel("?", SwingConstants.CENTER);
-            digitBoxes[i].setPreferredSize(new Dimension(60, 60));
-            digitBoxes[i].setFont(new Font("SansSerif", Font.BOLD, 28));
-            digitBoxes[i].setOpaque(true);
-            digitBoxes[i].setBackground(Color.WHITE);
-            digitBoxes[i].setForeground(Color.BLACK);
-            digitBoxes[i].setBorder(new LineBorder(Color.GRAY, 2));
-            digitPanel.add(digitBoxes[i]);
-        }
-        gbc.gridy = 3; gbc.weighty = 0.1;
-        gbc.fill = GridBagConstraints.NONE;
-        gbc.insets = new Insets(0, 0, 15, 0);
-        add(digitPanel, gbc);
+        // 3. MÀN HÌNH GỢI Ý 
+        lblFeedback = new JLabel("HÃY NHẬP SỐ!", SwingConstants.CENTER) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
+                g2.setColor(new Color(0, 0, 0, 150)); 
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+                g2.dispose();
+                super.paintComponent(g); 
+            }
+        };
+        lblFeedback.setFont(new Font("SansSerif", Font.BOLD, 32));
+        lblFeedback.setForeground(Color.WHITE);
+        lblFeedback.setPreferredSize(new Dimension(400, 100));
+        lblFeedback.setBorder(BorderFactory.createLineBorder(new Color(255, 215, 0), 2));
+        
+        gbc.gridy = 2; gbc.weighty = 0.15;
+        gbc.fill = GridBagConstraints.NONE;
+        add(lblFeedback, gbc);
+
+        // 4. LỊCH SỬ 
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -98,63 +85,46 @@ public class EasyGamePanel extends JPanel implements ActionListener {
             }
         };
         glassCard.setOpaque(false);
-        glassCard.setPreferredSize(new Dimension(330, 180)); 
-        glassCard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+        glassCard.setPreferredSize(new Dimension(350, 200));
         historyBox = new JPanel();
         historyBox.setLayout(new BoxLayout(historyBox, BoxLayout.Y_AXIS));
         historyBox.setOpaque(false);
-
         JScrollPane scrollPane = new JScrollPane(historyBox);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
         glassCard.add(scrollPane, BorderLayout.CENTER);
 
-        gbc.gridy = 4; gbc.weighty = 0.3; gbc.insets = new Insets(0, 65, 15, 65);
+        gbc.gridy = 3; gbc.weighty = 0.3; gbc.insets = new Insets(20, 65, 20, 65);
         add(glassCard, gbc);
 
-        JPanel controlPanel = new JPanel(new GridBagLayout());
+        // 5. ĐIỀU KHIỂN
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         controlPanel.setOpaque(false);
-        GridBagConstraints cbc = new GridBagConstraints();
-        
         txtInput = new JTextField();
-        txtInput.setPreferredSize(new Dimension(280, 55)); 
-        txtInput.setFont(new Font("SansSerif", Font.BOLD, 24));
+        txtInput.setPreferredSize(new Dimension(180, 55)); 
+        txtInput.setFont(new Font("SansSerif", Font.BOLD, 28));
         txtInput.setHorizontalAlignment(JTextField.CENTER);
-        txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "Nhập số...");
+        txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0-100");
         txtInput.putClientProperty(FlatClientProperties.STYLE, "arc: 20");
         
-        Dimension commonBtnSize = new Dimension(145, 50); 
         btnGuess = new JButton("ĐOÁN!");
-        btnGuess.setPreferredSize(commonBtnSize);
+        btnGuess.setPreferredSize(new Dimension(120, 55));
         btnGuess.setBackground(new Color(70, 130, 180));
         btnGuess.setForeground(Color.WHITE);
         btnGuess.setFont(new Font("SansSerif", Font.BOLD, 18));
         btnGuess.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
 
-        btnHint = new JButton("GỢI Ý");
-        btnHint.setPreferredSize(commonBtnSize);
-        btnHint.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnHint.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-
-        cbc.insets = new Insets(5, 5, 5, 5);
-        cbc.gridx = 0; cbc.gridwidth = 2;
-        controlPanel.add(txtInput, cbc);
-        cbc.gridy = 1; cbc.gridwidth = 1; 
-        cbc.gridx = 0; controlPanel.add(btnGuess, cbc);
-        cbc.gridx = 1; controlPanel.add(btnHint, cbc);
-
-        gbc.gridy = 5; gbc.weighty = 0.15;
+        controlPanel.add(txtInput);
+        controlPanel.add(btnGuess);
+        gbc.gridy = 4; gbc.weighty = 0.1;
         add(controlPanel, gbc);
 
-        btnBack = new JButton("THOÁT GAME");
-        btnBack.setPreferredSize(new Dimension(300, 50)); 
-        btnBack.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnBack.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-        btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff");
-        gbc.gridy = 6; gbc.weighty = 0.1;
-        gbc.insets = new Insets(0, 0, 70, 0); 
+        // 6. THOÁT
+        btnBack = new JButton("THOÁT");
+        btnBack.setPreferredSize(new Dimension(150, 45));
+        btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff; arc: 20");
+        gbc.gridy = 5; gbc.weighty = 0.1; gbc.insets = new Insets(20, 0, 50, 0);
         add(btnBack, gbc);
 
         gameTimer = new Timer(1000, e -> {
@@ -163,45 +133,80 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         });
 
         btnGuess.addActionListener(this);
-        btnHint.addActionListener(this);
         btnBack.addActionListener(this);
     }
 
     public void initNewGame(String mode) {
-        this.currentTurn = 0;
-        this.secondsElapsed = 0;
-        this.score = 0;
-        
-        if(mode.equals("EASY")) { maxTurns = 8; lblSubtitle.setText("Nhập số (1-50)"); }
-        else if(mode.equals("NORMAL")) { maxTurns = 6; lblSubtitle.setText("Nhập số (1-100)"); }
-        else { maxTurns = 5; lblSubtitle.setText("Nhập số (1-200)"); }
+        engine.startNewGame(); 
+        secondsElapsed = 0;
 
-        lblTurn.setText("Lượt: 0/" + maxTurns);
-        lblTime.setText("[ 0s ]");
+        updateTurnDisplay();
+
+        lblTurn.setText("Lượt: 0/" + engine.getMaxAttempts());
+        lblFeedback.setText("NHẬP SỐ TỪ 0 - 100");
+        lblFeedback.setForeground(Color.WHITE);
         historyBox.removeAll();
+        historyBox.repaint();
         txtInput.setText("");
-
-        for (JLabel box : digitBoxes) {
-            box.setText("?");
-            box.setBackground(new Color(255, 255, 255, 100));
-            box.setForeground(Color.BLACK);
-        }
-
-        // TODO: Gọi GameService.generateTarget(mode)
-        java.util.Random r = new java.util.Random();
-        for (int i = 0; i < 4; i++) targetNumbers[i] = r.nextInt(50) + 1;
-
         gameTimer.restart();
     }
 
+    private void handleGuess() {
+        String input = txtInput.getText().trim();
+        if (!input.matches("\\d+")) return;
+
+        int guess = Integer.parseInt(input);
+        String result = engine.checkGuess(guess); 
+        
+        updateTurnDisplay();
+        addHistoryRow("Lượt " + engine.getAttemptsUsed() + ": [" + guess + "] -> " + result);
+
+        if (result.equals("QUÁ CAO")) {
+            lblFeedback.setText("↓ QUÁ CAO ↓");
+            lblFeedback.setForeground(new Color(231, 76, 60)); // Đỏ
+        } else if (result.equals("QUÁ THẤP")) {
+            lblFeedback.setText("↑ QUÁ THẤP ↑");
+            lblFeedback.setForeground(new Color(52, 152, 219)); // Xanh dương
+        } else if (result.equals("MATCH!")) {
+            lblFeedback.setText("✨ CHÍNH XÁC! ✨");
+            lblFeedback.setForeground(new Color(46, 204, 113)); // Xanh lá
+        }
+
+        txtInput.setText("");
+
+        if (engine.isGameOver()) {
+            gameTimer.stop();
+            endGame(engine.isWin());
+        }
+    }
+
+    private void endGame(boolean isWin) {
+        String status = isWin ? "WINNER" : "GAME OVER";
+        int finalScore = engine.calculateFinalScore();
+        
+        // Kết quả Dialog
+        ResultDialog dialog = new ResultDialog(
+            (Frame) SwingUtilities.getWindowAncestor(this), 
+            status, 
+            finalScore, 
+            secondsElapsed, 
+            engine.getAttemptsUsed()
+        );
+        
+        dialog.setVisible(true); 
+
+        if (dialog.isRetry()) {
+            initNewGame(mainframe.getSelectedMode()); 
+        } else {
+            mainframe.showScreen("Welcome");
+        }
+    }
+
     private void addHistoryRow(String text) {
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        row.setOpaque(false);
         JLabel lbl = new JLabel(text);
-        lbl.setForeground(Color.BLACK); 
-        lbl.setFont(new Font("SansSerif", Font.BOLD, 14));
-        row.add(lbl);
-        historyBox.add(row);
+        lbl.setFont(new Font("SansSerif", Font.BOLD, 16));
+        lbl.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        historyBox.add(lbl);
         historyBox.revalidate();
         SwingUtilities.invokeLater(() -> {
             JScrollBar vertical = ((JScrollPane)historyBox.getParent().getParent()).getVerticalScrollBar();
@@ -209,37 +214,27 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         });
     }
 
-    private void handleGuess() {
-        String input = txtInput.getText().trim();
-        if (input.isEmpty() || !input.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "LỖI: Chỉ nhập số nguyên dương!", "Cảnh báo", JOptionPane.ERROR_MESSAGE);
-            txtInput.setText("");
-            return; 
-        }
+    private void updateTurnDisplay() {
+        int used = engine.getAttemptsUsed();
+        int max = engine.getMaxAttempts();
+        int remaining = max - used;
 
-        int guessValue = Integer.parseInt(input);
-        currentTurn++;
-        lblTurn.setText("Bạn đã đoán " + currentTurn + " lần. Còn lại " + (maxTurns - currentTurn) + " lượt.");
-        
-        // LOGIC WORDLE STYLE TẠM THỜI
-        boolean found = false;
-        for (int i = 0; i < 4; i++) {
-            if (guessValue == targetNumbers[i]) {
-                digitBoxes[i].setText(String.valueOf(guessValue));
-                digitBoxes[i].setBackground(new Color(46, 204, 113)); // Màu Xanh lá (Đúng)
-                digitBoxes[i].setForeground(Color.WHITE);
-                found = true;
-            }
-        }
-        
-        String resultMsg = found ? "CHÍNH XÁC VỊ TRÍ!" : "KHÔNG CÓ TRONG BỘ MÃ";
-        addHistoryRow("Lượt " + currentTurn + ": [" + guessValue + "] -> " + resultMsg);
-        txtInput.setText("");
+        lblTurn.setText("Lượt: " + used + "/" + max + " (Còn lại: " + remaining + ")");
 
-        if (currentTurn >= maxTurns) {
-            gameTimer.stop();
-            JOptionPane.showMessageDialog(this, "Hết lượt! Trò chơi kết thúc.");
-            mainframe.showScreen("Welcome");
+        float ratio = (float) used / max;
+
+        int red = (int) (46 + (231 - 46) * ratio);
+        int green = (int) (204 + (76 - 204) * ratio);
+        int blue = (int) (113 + (60 - 113) * ratio);
+
+        Color dynamicColor = new Color(red, green, blue);
+        
+        lblTurn.setForeground(dynamicColor);
+
+        if (remaining <= 1) {
+            lblTurn.setFont(new Font("SansSerif", Font.ITALIC | Font.BOLD, 20));
+        } else {
+            lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
         }
     }
 
@@ -248,7 +243,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         if (e.getSource() == btnGuess) handleGuess();
         if (e.getSource() == btnBack) {
             gameTimer.stop();
-            mainframe.showScreen("Mode");
+            mainframe.showScreen("Welcome");
         }
     }
 
@@ -257,26 +252,4 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         super.paintComponent(g);
         g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
     }
-/* 
-    // Trong hàm xử lý Game Over của EasyGamePanel
-    private void endGame(boolean isWin) {
-        gameTimer.stop();
-        String status = isWin ? "WINNER" : "GAME OVER";
-        
-        // 1. Lưu vào Database trước 
-        // gameDAO.saveGameHistory(currentUser, mode, score, isWin ? 1 : 0, secondsElapsed);
-
-        // 2. Hiện Popup kết quả
-        ResultDialog dialog = new ResultDialog((Frame) SwingUtilities.getWindowAncestor(this), 
-                                            status, score, secondsElapsed, currentTurn);
-        dialog.setVisible(true);
-
-        // 3. Xử lý lựa chọn của người chơi
-        if (dialog.isRetry()) {
-            resetGame(); 
-        } else {
-            mainframe.showScreen("Welcome");
-        }
-    }
- */
 }

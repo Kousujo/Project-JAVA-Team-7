@@ -1,4 +1,4 @@
-
+package logic;
 
 public class MediumModeEngine extends AbstractGameEngine {
     private boolean hasBonus; // Cờ đánh dấu đã nhận thưởng chưa

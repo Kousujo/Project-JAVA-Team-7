@@ -7,6 +7,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class LeaderboardPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
@@ -14,6 +15,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
     private JButton btnBack;
     private JTable table;
     private DefaultTableModel model;
+    private List <Object[]> data; 
 
     public LeaderboardPanel(MainFrame frame) {
         this.mainframe = frame;
@@ -106,24 +108,20 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
 
         btnBack.addActionListener(this);
         
-        loadDataFromDB();
+        refreshData();
     }
 
-    private void loadDataFromDB() {
-    // 1. Xóa sạch dữ liệu cũ trên bảng
-    model.setRowCount(0); 
-    
-    // 2. Gọi DAO để lấy dữ liệu từ SQL Server
-    database.GameDAO dao = new database.GameDAO();
-    // Chúng ta cần bổ sung hàm getTopScores() vào GameDAO (xem mục 3 bên dưới)
-    java.util.List<Object[]> data = dao.getTopScores(); 
-    
-    // 3. Thêm từng dòng vào model
-    for (Object[] row : data) {
-        model.addRow(row);
+    public void refreshData() {
+        model.setRowCount(0); 
+
+        database.GameDAO dao = new database.GameDAO();
+        data = dao.getTopScores(); 
+        
+        for (Object[] row : data) {
+            model.addRow(row);
+        }
     }
-}
-    // Cập nhật hàm hiện Popup: Hiện số lượt, thời gian, số bí mật
+
     private void showPlayerStats(int score, String mode, int time, int turns, int secret) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
         dialog.setUndecorated(true);
@@ -169,15 +167,6 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-    }
-
-    public void refreshData() {
-        model.setRowCount(0); // Xóa dữ liệu cũ trên bảng giao diện
-        database.GameDAO dao = new database.GameDAO();
-        java.util.List<Object[]> data = dao.getTopScores();
-        for (Object[] row : data) {
-            model.addRow(row);
-        }
     }
 
     @Override

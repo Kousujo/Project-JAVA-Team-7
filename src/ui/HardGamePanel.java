@@ -3,6 +3,7 @@ package ui;
 import com.formdev.flatlaf.FlatClientProperties;
 import graphic.MultiLineOutlineLabel;
 import logic.HardModeEngine;
+import database.GameDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,31 +12,52 @@ public class HardGamePanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
     private JPanel historyBox;
+    private JScrollPane scrollPane;
     private JTextField txtInput;
     private JButton btnGuess, btnBack;
     private JLabel lblTurn, lblTime;
     private Timer gameTimer;
     
     private int secondsElapsed = 0;
-    private HardModeEngine engine; 
+    private HardModeEngine engine;
+    private GameDAO dao; 
+    
+    // Constants
+    private static final String GREEN = "G";
+    private static final String YELLOW = "Y";
+    private static final Color COLOR_GREEN = new Color(46, 204, 113);
+    private static final Color COLOR_YELLOW = new Color(241, 196, 15);
+    private static final Color COLOR_GRAY = new Color(127, 140, 141); 
 
     public HardGamePanel(MainFrame frame) {
         this.mainframe = frame;
-        this.engine = new HardModeEngine(); 
+        this.engine = new HardModeEngine();
+        this.dao = new GameDAO();
         backgroundImage = new ImageIcon("res/Toy.png").getImage();
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // 1. TIÊU ĐỀ (Đỏ rực cho đúng chất Hardcore)
-        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("HARD MISSION", SwingConstants.CENTER);
+        
+        setupTitle();
+        setupStats();
+        setupHistory();
+        setupControls();
+        setupBackButton();
+        setupTimer();
+    }
+    
+    private void setupTitle() {
+        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("HARD", SwingConstants.CENTER);
         lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
         lblModeName.setForeground(new Color(231, 76, 60)); 
         lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weighty = 0.1;
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0; 
+        gbc.weighty = 0.1;
         gbc.insets = new Insets(30, 0, 0, 0);
         add(lblModeName, gbc);
-
-        // 2. PANEL THÔNG SỐ
+    }
+    
+    private void setupStats() {
         JPanel statsPanel = new JPanel(new BorderLayout());
         statsPanel.setOpaque(false);
         lblTurn = new JLabel();
@@ -46,12 +68,15 @@ public class HardGamePanel extends JPanel implements ActionListener {
         statsPanel.add(lblTurn, BorderLayout.WEST);
         statsPanel.add(lblTime, BorderLayout.EAST);
 
-        gbc.gridy = 1; gbc.weighty = 0.05;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 1; 
+        gbc.weighty = 0.05;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 85, 5, 85);
         add(statsPanel, gbc);
-
-        // 3. KHÔNG GIAN HIỂN THỊ WORDLE (LỊCH SỬ)
+    }
+    
+    private void setupHistory() {
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -69,16 +94,20 @@ public class HardGamePanel extends JPanel implements ActionListener {
         historyBox.setLayout(new BoxLayout(historyBox, BoxLayout.Y_AXIS));
         historyBox.setOpaque(false);
         
-        JScrollPane scrollPane = new JScrollPane(historyBox);
+        scrollPane = new JScrollPane(historyBox);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
         glassCard.add(scrollPane, BorderLayout.CENTER);
 
-        gbc.gridy = 2; gbc.weighty = 0.5; gbc.insets = new Insets(10, 50, 20, 50);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 2; 
+        gbc.weighty = 0.5;
+        gbc.insets = new Insets(10, 50, 20, 50);
         add(glassCard, gbc);
-
-        // 4. INPUT ĐIỀU KHIỂN
+    }
+    
+    private void setupControls() {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         controlPanel.setOpaque(false);
         
@@ -99,25 +128,36 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
         controlPanel.add(txtInput);
         controlPanel.add(btnGuess);
-        gbc.gridy = 3; gbc.weighty = 0.1;
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 3; 
+        gbc.weighty = 0.1;
         add(controlPanel, gbc);
-
+        
+        btnGuess.addActionListener(this);
+        // Nhấn Enter để đoán 
+        txtInput.addActionListener(e -> handleGuess());
+    }
+    
+    private void setupBackButton() {
         btnBack = new JButton("EXIT MISSION");
         btnBack.setPreferredSize(new Dimension(150, 45));
         btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #333; foreground: #eee; arc: 20");
-        gbc.gridy = 4; gbc.weighty = 0.1; gbc.insets = new Insets(10, 0, 30, 0);
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 4; 
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(10, 0, 30, 0);
         add(btnBack, gbc);
-
+        
+        btnBack.addActionListener(this);
+    }
+    
+    private void setupTimer() {
         gameTimer = new Timer(1000, e -> {
             secondsElapsed++;
             lblTime.setText("[ " + secondsElapsed + "s ]");
         });
-
-        btnGuess.addActionListener(this);
-        btnBack.addActionListener(this);
-        
-        // Nhấn Enter để đoán luôn cho nhanh
-        txtInput.addActionListener(e -> handleGuess());
     }
 
     public void initNewGame(String mode) {
@@ -132,7 +172,7 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
     private void handleGuess() {
         String input = txtInput.getText().trim();
-        if (input.length() != 5 || !input.matches("\\d+")) {
+        if (!isValidInput(input)) {
             JOptionPane.showMessageDialog(this, "Mật mã phải có đúng 5 chữ số!");
             return;
         }
@@ -149,13 +189,14 @@ public class HardGamePanel extends JPanel implements ActionListener {
             endGame(engine.isWin());
         }
     }
+    
+    private boolean isValidInput(String input) {
+        return input.length() == 5 && input.matches("\\d+");
+    }
 
     private void handleWin() {
-        int score = engine.calculateFinalScore();
-
         // LƯU VÀO DATABASE
-        database.GameDAO dao = new database.GameDAO();
-        dao.insertGameResult(score, "HARD", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
+        dao.insertGameResult(engine.calculateFinalScore(), "HARD", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
     }
 
     private void addWordleRow(String guess, String result) {
@@ -174,15 +215,15 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
             // Đổ màu theo kết quả Engine trả về
             switch (colors[i]) {
-                case "G":
-                    box.setBackground(new Color(46, 204, 113));
-                    break; // Xanh lá
-                case "Y":
-                    box.setBackground(new Color(241, 196, 15));
-                    break; // Vàng
+                case GREEN:
+                    box.setBackground(COLOR_GREEN);
+                    break;
+                case YELLOW:
+                    box.setBackground(COLOR_YELLOW);
+                    break;
                 default:
-                    box.setBackground(new Color(127, 140, 141));
-                    break; // Xám
+                    box.setBackground(COLOR_GRAY);
+                    break;
             }
             row.add(box);
         }
@@ -192,7 +233,7 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
         // Tự động cuộn xuống cuối
         SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = ((JScrollPane) historyBox.getParent().getParent()).getVerticalScrollBar();
+            JScrollBar vertical = scrollPane.getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
     }
@@ -219,14 +260,18 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
     private void endGame(boolean isWin) {
         String status = isWin ? "WINNER" : "GAME OVER";
-        int finalScore = engine.calculateFinalScore();
+        
+        if (isWin) {
+            handleWin();
+        }
 
         ResultDialog dialog = new ResultDialog(
             (Frame) SwingUtilities.getWindowAncestor(this),
             status,
-            finalScore,
+            engine.calculateFinalScore(),
             secondsElapsed,
-            engine.getAttemptsUsed()
+            engine.getAttemptsUsed(),
+            engine.getTargetNumber()
         );
         dialog.setVisible(true);
 
@@ -235,10 +280,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
         } else {
             mainframe.showScreen("Welcome");
         }
-
-        if (isWin) {
-            handleWin();
-        } 
     }
 
     @Override

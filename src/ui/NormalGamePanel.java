@@ -3,6 +3,7 @@ package ui;
 import com.formdev.flatlaf.FlatClientProperties;
 import graphic.MultiLineOutlineLabel;
 import logic.NormalModeEngine; 
+import database.GameDAO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -11,33 +12,56 @@ public class NormalGamePanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
     private JPanel historyBox;
+    private JScrollPane scrollPane;
     private JTextField txtInput;
     private JButton btnGuess, btnBack;
     private JLabel lblTurn, lblTime;
-    private JLabel lblFeedbackLeft, lblFeedbackRight; // 2 màn hình gợi ý
-    private JLabel lblBonus; // Hiển thị trạng thái Bonus
+    private JLabel lblFeedbackLeft, lblFeedbackRight;
+    private JLabel lblBonus;
     private Timer gameTimer;
     
     private int secondsElapsed = 0;
-    private NormalModeEngine engine; 
+    private NormalModeEngine engine;
+    private GameDAO dao;
+    
+    // Constants
+    private static final String MATCH = "MATCH";
+    private static final String UP = "UP";
+    private static final String DOWN = "DOWN";
+    private static final Color COLOR_MATCH = new Color(46, 204, 113);
+    private static final Color COLOR_UP = new Color(52, 152, 219);
+    private static final Color COLOR_DOWN = new Color(231, 76, 60); 
 
     public NormalGamePanel(MainFrame frame) {
         this.mainframe = frame;
-        this.engine = new NormalModeEngine(); 
+        this.engine = new NormalModeEngine();
+        this.dao = new GameDAO();
         backgroundImage = new ImageIcon("res/Toy.png").getImage();
         setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        // 1. TIÊU ĐỀ
+        
+        setupTitle();
+        setupStats();
+        setupFeedback();
+        setupHistory();
+        setupControls();
+        setupBackButton();
+        setupTimer();
+    }
+    
+    private void setupTitle() {
         MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("NORMAL MISSION", SwingConstants.CENTER);
         lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
         lblModeName.setForeground(new Color(255, 215, 0));
         lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
-        gbc.gridx = 0; gbc.gridy = 0; gbc.weighty = 0.1;
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0; 
+        gbc.weighty = 0.1;
         gbc.insets = new Insets(40, 0, 0, 0);
         add(lblModeName, gbc);
-
-        // 2. PANEL THÔNG SỐ & BONUS
+    }
+    
+    private void setupStats() {
         JPanel statsPanel = new JPanel(new BorderLayout());
         statsPanel.setOpaque(false);
         lblTurn = new JLabel();
@@ -56,12 +80,15 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         lblBonus.setHorizontalAlignment(SwingConstants.CENTER);
         statsPanel.add(lblTime, BorderLayout.EAST);
 
-        gbc.gridy = 1; gbc.weighty = 0.05;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 1; 
+        gbc.weighty = 0.05;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 85, 10, 85);
         add(statsPanel, gbc);
-
-        // 3. HAI MÀN HÌNH GỢI Ý (LEFT & RIGHT)
+    }
+    
+    private void setupFeedback() {
         JPanel feedbackPanel = new JPanel(new GridLayout(1, 2, 20, 0));
         feedbackPanel.setOpaque(false);
         
@@ -71,11 +98,14 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         feedbackPanel.add(lblFeedbackLeft);
         feedbackPanel.add(lblFeedbackRight);
         
-        gbc.gridy = 2; gbc.weighty = 0.15;
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 2; 
+        gbc.weighty = 0.15;
         gbc.fill = GridBagConstraints.NONE;
         add(feedbackPanel, gbc);
-
-        // 4. LỊCH SỬ (GLASS CARD)
+    }
+    
+    private void setupHistory() {
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -91,16 +121,20 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         historyBox = new JPanel();
         historyBox.setLayout(new BoxLayout(historyBox, BoxLayout.Y_AXIS));
         historyBox.setOpaque(false);
-        JScrollPane scrollPane = new JScrollPane(historyBox);
+        scrollPane = new JScrollPane(historyBox);
         scrollPane.setOpaque(false);
         scrollPane.getViewport().setOpaque(false);
         scrollPane.setBorder(null);
         glassCard.add(scrollPane, BorderLayout.CENTER);
 
-        gbc.gridy = 3; gbc.weighty = 0.3; gbc.insets = new Insets(10, 65, 10, 65);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 3;
+        gbc.weighty = 0.3;
+        gbc.insets = new Insets(10, 65, 10, 65);
         add(glassCard, gbc);
-
-        // 5. ĐIỀU KHIỂN
+    }
+    
+    private void setupControls() {
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
         controlPanel.setOpaque(false);
         txtInput = new JTextField();
@@ -119,23 +153,34 @@ public class NormalGamePanel extends JPanel implements ActionListener {
 
         controlPanel.add(txtInput);
         controlPanel.add(btnGuess);
-        gbc.gridy = 4; gbc.weighty = 0.1;
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 4;
+        gbc.weighty = 0.1;
         add(controlPanel, gbc);
-
-        // 6. THOÁT
+        
+        btnGuess.addActionListener(this);
+    }
+    
+    private void setupBackButton() {
         btnBack = new JButton("THOÁT");
         btnBack.setPreferredSize(new Dimension(150, 45));
         btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff; arc: 20");
-        gbc.gridy = 5; gbc.weighty = 0.1; gbc.insets = new Insets(10, 0, 40, 0);
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(10, 0, 40, 0);
         add(btnBack, gbc);
-
+        
+        btnBack.addActionListener(this);
+    }
+    
+    private void setupTimer() {
         gameTimer = new Timer(1000, e -> {
             secondsElapsed++;
             lblTime.setText("[ " + secondsElapsed + "s ]");
         });
-
-        btnGuess.addActionListener(this);
-        btnBack.addActionListener(this);
     }
 
     private JLabel createFeedbackLabel(String text) {
@@ -178,7 +223,7 @@ public class NormalGamePanel extends JPanel implements ActionListener {
 
     private void handleGuess() {
         String input = txtInput.getText().trim();
-        if (input.length() != 4 || !input.matches("\\d+")) {
+        if (!isValidInput(input)) {
             JOptionPane.showMessageDialog(this, "Hãy nhập đúng 4 chữ số!");
             return;
         }
@@ -197,7 +242,7 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         }
 
         // Cập nhật trạng thái Bonus nếu có
-        if (lblFeedbackLeft.getText().equals("MATCH") || lblFeedbackRight.getText().equals("MATCH")) {
+        if (lblFeedbackLeft.getText().equals(MATCH) || lblFeedbackRight.getText().equals(MATCH)) {
             if (engine.getAttemptsUsed() <= 5) {
                 lblBonus.setText("BONUS ACTIVE! 🔥");
                 lblBonus.setForeground(new Color(255, 215, 0));
@@ -212,27 +257,27 @@ public class NormalGamePanel extends JPanel implements ActionListener {
             endGame(engine.isWin());
         }
     }
+    
+    private boolean isValidInput(String input) {
+        return input.length() == 4 && input.matches("\\d+");
+    }
 
     private void handleWin() {
-        int score = engine.calculateFinalScore();
-
         // LƯU VÀO DATABASE
-        database.GameDAO dao = new database.GameDAO();
-        dao.insertGameResult(score, "NORMAL", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
+        dao.insertGameResult(engine.calculateFinalScore(), "NORMAL", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
     }
 
     private void updateFeedback(JLabel lbl, String hint) {
         lbl.setText(hint);
         switch (hint) {
-            case "MATCH":
-            case "MATCH!":
-                lbl.setForeground(new Color(46, 204, 113));
+            case MATCH:
+                lbl.setForeground(COLOR_MATCH);
                 break;
-            case "UP":
-                lbl.setForeground(new Color(52, 152, 219));
+            case UP:
+                lbl.setForeground(COLOR_UP);
                 break;
-            case "DOWN":
-                lbl.setForeground(new Color(231, 76, 60));
+            case DOWN:
+                lbl.setForeground(COLOR_DOWN);
                 break;
             default:
                 lbl.setForeground(Color.WHITE);
@@ -246,7 +291,7 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         historyBox.add(lbl);
         historyBox.revalidate();
         SwingUtilities.invokeLater(() -> {
-            JScrollBar vertical = ((JScrollPane) historyBox.getParent().getParent()).getVerticalScrollBar();
+            JScrollBar vertical = scrollPane.getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
     }
@@ -273,14 +318,18 @@ public class NormalGamePanel extends JPanel implements ActionListener {
 
     private void endGame(boolean isWin) {
         String status = isWin ? "WINNER" : "GAME OVER";
-        int finalScore = engine.calculateFinalScore();
+        
+        if (isWin) {
+            handleWin();
+        }
 
         ResultDialog dialog = new ResultDialog(
             (Frame) SwingUtilities.getWindowAncestor(this),
             status,
-            finalScore,
+            engine.calculateFinalScore(),
             secondsElapsed,
-            engine.getAttemptsUsed()
+            engine.getAttemptsUsed(),
+            engine.getTargetNumber()
         );
         dialog.setVisible(true);
 
@@ -289,10 +338,6 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         } else {
             mainframe.showScreen("Welcome");
         }
-
-        if (isWin) {
-            handleWin();
-        } 
     }
 
     @Override

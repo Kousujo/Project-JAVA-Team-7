@@ -24,7 +24,7 @@ public class ModePanel extends JPanel implements ActionListener {
         Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
         Color statusTextColor = new Color(50, 50, 50);
 
-        lblHeader = new MultiLineOutlineLabel("CHỌN ĐỘ\nKHÓ", SwingConstants.CENTER); // Gọn hơn
+        lblHeader = new MultiLineOutlineLabel("SELECT\nMODE", SwingConstants.CENTER); // Gọn hơn
         lblHeader.setFont(new Font("SansSerif", Font.BOLD, 60));
         lblHeader.setForeground(Color.WHITE);
         lblHeader.setOutlineColor(new Color(0, 0, 0, 180));
@@ -32,7 +32,7 @@ public class ModePanel extends JPanel implements ActionListener {
         gbc.gridx = 0; gbc.gridy = 0;
         gbc.weighty = 0.3;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(80, 0, 0, 0); 
+        gbc.insets = new Insets(100, 0, -50, 0); 
         add(lblHeader, gbc);
 
         modePanel = new JPanel(new GridLayout(3, 1, 0, 15)) {
@@ -48,9 +48,9 @@ public class ModePanel extends JPanel implements ActionListener {
         modePanel.setOpaque(false);
         modePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        rbEasy = new JRadioButton("DỄ ( 1-100 )");
-        rbNormal = new JRadioButton("VỪA ( 1000-9999 )");
-        rbHard = new JRadioButton("KHÓ ( 1-200 )");
+        rbEasy = new JRadioButton("EASY ( 0-100 )");
+        rbNormal = new JRadioButton("NORMAL ( 1000-9999 )");
+        rbHard = new JRadioButton("HARD ( 00000-99999 )");
 
         setupRadioButton(rbEasy, mainFont, statusTextColor);
         setupRadioButton(rbNormal, mainFont, statusTextColor);
@@ -73,14 +73,14 @@ public class ModePanel extends JPanel implements ActionListener {
         buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 35, 10));
         buttonPanel.setOpaque(false);
 
-        btnStart = new JButton("VÀO TRẬN");
+        btnStart = new JButton("START!");
         btnStart.setFont(new Font("SansSerif", Font.BOLD, 22));
         btnStart.setPreferredSize(new Dimension(180, 55));
         btnStart.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
         btnStart.setBackground(new Color(70, 130, 180)); 
         btnStart.setForeground(Color.WHITE);
 
-        btnBack = new JButton("QUAY LẠI");
+        btnBack = new JButton("BACK");
         btnBack.setFont(new Font("SansSerif", Font.BOLD, 22));
         btnBack.setPreferredSize(new Dimension(180, 55));
         btnBack.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);

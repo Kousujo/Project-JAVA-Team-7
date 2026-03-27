@@ -19,12 +19,13 @@ public class HardModeEngine extends AbstractGameEngine {
         this.currentScore = 0;
     }
 
-    // Nhận vào một chuỗi 
-    public String checkWordleGuess(String guess) {
+    public String checkGuess(int guess) {
+        String guessStr = String.format("%05d", guess);
+        
         if (isGameOver) return "GAME_OVER";
         attemptsUsed++;
 
-        if (guess.equals(targetString)) {
+        if (guessStr.equals(targetString)) {
             isWin = true;
             isGameOver = true;
             currentScore = calculateFinalScore();
@@ -36,7 +37,7 @@ public class HardModeEngine extends AbstractGameEngine {
             currentScore = 0;
         }
 
-        return evaluateColors(guess);
+        return evaluateColors(guessStr);
     }
 
 
@@ -80,13 +81,5 @@ public class HardModeEngine extends AbstractGameEngine {
     public int calculateFinalScore() {
         if (!isWin) return 0;
         return (9 - attemptsUsed) * 500;
-    }
-    
-    // Ghi đè hàm cũ để tương thích với AbstractGameEngine (Ép kiểu)
-    @Override
-    public String checkGuess(int guess) {
-        // Format lại số int thành chuỗi 5 chữ số (thêm số 0 ở đầu nếu cần)
-        String guessStr = String.format("%05d", guess);
-        return checkWordleGuess(guessStr);
     }
 }

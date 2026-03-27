@@ -3,24 +3,11 @@ package ui;
 import com.formdev.flatlaf.FlatClientProperties;
 import graphic.MultiLineOutlineLabel;
 import logic.EasyModeEngine;
-import database.GameDAO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class EasyGamePanel extends JPanel implements ActionListener {
-    private MainFrame mainframe;
-    private Image backgroundImage;
-    private JPanel historyBox;
-    private JScrollPane scrollPane;
-    private JTextField txtInput;
-    private JButton btnGuess, btnBack;
-    private JLabel lblTurn, lblTime, lblFeedback, lblWarning; 
-    private Timer gameTimer;
-    
-    private int secondsElapsed = 0;
-    private EasyModeEngine engine;
-    private GameDAO dao;
+public class EasyGamePanel extends BaseGamePanel {
+    private JLabel lblFeedback, lblWarning;
     
     private static final String TOO_HIGH = "QUÁ CAO";
     private static final String TOO_LOW = "QUÁ THẤP";
@@ -30,25 +17,16 @@ public class EasyGamePanel extends JPanel implements ActionListener {
     private static final Color COLOR_MATCH = new Color(46, 204, 113); 
 
     public EasyGamePanel(MainFrame frame) {
-        this.mainframe = frame;
+        super(frame);
         this.engine = new EasyModeEngine();
-        this.dao = new GameDAO();
-        backgroundImage = new ImageIcon("res/Toy.png").getImage();
-        setLayout(new GridBagLayout());
-        
-        setupTitle();
-        setupStats();
-        setupFeedback();
-        setupHistory();
-        setupControls();
-        setupBackButton();
-        setupTimer();
+        buildUI();
     }
     
-    private void setupTitle() {
+    @Override
+    protected void setupTitle() {
         MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("EASY GUESS", SwingConstants.CENTER);
         lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
-        lblModeName.setForeground(new Color(255, 215, 0));
+        lblModeName.setForeground(new Color(143,185,53));
         lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
         
         GridBagConstraints gbc = new GridBagConstraints();
@@ -58,26 +36,8 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         add(lblModeName, gbc);
     }
     
-    private void setupStats() {
-        JPanel statsPanel = new JPanel(new BorderLayout());
-        statsPanel.setOpaque(false);
-        lblTurn = new JLabel();
-        lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblTime = new JLabel("[ 0s ]");
-        lblTime.setForeground(Color.BLUE);
-        lblTime.setFont(new Font("SansSerif", Font.BOLD, 18));
-        statsPanel.add(lblTurn, BorderLayout.WEST);
-        statsPanel.add(lblTime, BorderLayout.EAST);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 1; 
-        gbc.weighty = 0.05;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(0, 85, 10, 85);
-        add(statsPanel, gbc);
-    }
-    
-    private void setupFeedback() {
+    @Override
+    protected void setupFeedback() {
         lblFeedback = new JLabel("HÃY NHẬP SỐ!", SwingConstants.CENTER) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -99,9 +59,19 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         gbc.weighty = 0.15;
         gbc.fill = GridBagConstraints.NONE;
         add(lblFeedback, gbc);
+
+        lblWarning = new JLabel("", SwingConstants.CENTER);
+        lblWarning.setForeground(Color.RED);
+        lblWarning.setFont(new Font("SansSerif", Font.BOLD, 14));
+        lblWarning.setVisible(false);
+
+        gbc.gridy = 5; 
+        gbc.weighty = 0.02;
+        add(lblWarning, gbc);
     }
     
-    private void setupHistory() {
+    @Override
+    protected void setupHistory() {
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
@@ -133,65 +103,12 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         add(glassCard, gbc);
     }
     
-    private void setupControls() {
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 0));
-        controlPanel.setOpaque(false);
-        
-        txtInput = new JTextField();
-        txtInput.setPreferredSize(new Dimension(180, 55)); 
-        txtInput.setFont(new Font("SansSerif", Font.BOLD, 28));
-        txtInput.setHorizontalAlignment(JTextField.CENTER);
+    @Override
+    protected void setupControls() {
+        super.setupControls(); 
         txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0-100");
-        txtInput.putClientProperty(FlatClientProperties.STYLE, "arc: 20");
-        
-        btnGuess = new JButton("ĐOÁN!");
-        btnGuess.setPreferredSize(new Dimension(120, 55));
+        btnGuess.setText("ĐOÁN!");
         btnGuess.setBackground(new Color(70, 130, 180));
-        btnGuess.setForeground(Color.WHITE);
-        btnGuess.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnGuess.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-
-        controlPanel.add(txtInput);
-        controlPanel.add(btnGuess);
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 4;
-        gbc.weighty = 0.1;
-        add(controlPanel, gbc);
-
-        lblWarning = new JLabel("", SwingConstants.CENTER);
-        lblWarning.setForeground(Color.RED);
-        lblWarning.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblWarning.setVisible(false);
-
-        gbc.gridy = 5; 
-        gbc.weighty = 0.02;
-        add(lblWarning, gbc);
-        
-        btnGuess.addActionListener(this);
-        txtInput.addActionListener(e -> handleGuess());
-    }
-    
-    private void setupBackButton() {
-        btnBack = new JButton("THOÁT");
-        btnBack.setPreferredSize(new Dimension(150, 45));
-        setFont(new Font("SansSerif", Font.BOLD, 22));
-        btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff; arc: 20");
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 6;
-        gbc.weighty = 0.1;
-        gbc.insets = new Insets(20, 0, 50, 0);
-        add(btnBack, gbc);
-        
-        btnBack.addActionListener(this);
-    }
-    
-    private void setupTimer() {
-        gameTimer = new Timer(1000, e -> {
-            secondsElapsed++;
-            lblTime.setText("[ " + secondsElapsed + "s ]");
-        });
     }
 
     public void initNewGame(String mode) {
@@ -199,8 +116,6 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         secondsElapsed = 0;
 
         updateTurnDisplay();
-
-        lblTurn.setText("Lượt: 0/" + engine.getMaxAttempts());
         lblFeedback.setText("NHẬP SỐ TỪ 0 - 100");
         lblFeedback.setForeground(Color.WHITE);
         historyBox.removeAll();
@@ -209,7 +124,8 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         gameTimer.restart();
     }
 
-    private void handleGuess() {
+    @Override
+    protected void handleGuess() {
         String input = txtInput.getText().trim();
         if (!isValidInput(input)) {
             lblWarning.setText("⚠️ Vui lòng chỉ nhập số!");
@@ -228,7 +144,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
 
         if (engine.isGameOver()) {
             gameTimer.stop();
-            endGame(engine.isWin());
+            endGame(engine.isWin(), "EASY");
         }
     }
     
@@ -249,10 +165,6 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         }
     }
 
-    private void handleWin() {
-        dao.insertGameResult(engine.calculateFinalScore(), "EASY", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
-    }
-
     private void addHistoryRow(String text) {
         JLabel lbl = new JLabel(text);
         lbl.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -263,68 +175,5 @@ public class EasyGamePanel extends JPanel implements ActionListener {
             JScrollBar vertical = scrollPane.getVerticalScrollBar();
             vertical.setValue(vertical.getMaximum());
         });
-    }
-
-    private void updateTurnDisplay() {
-        int used = engine.getAttemptsUsed();
-        int max = engine.getMaxAttempts();
-        int remaining = max - used;
-
-        lblTurn.setText("Lượt: " + used + "/" + max + " (Còn lại: " + remaining + ")");
-
-        float ratio = (float) used / max;
-        int red = (int) (46 + (231 - 46) * ratio);
-        int green = (int) (204 + (76 - 204) * ratio);
-        int blue = (int) (113 + (60 - 113) * ratio);
-        Color dynamicColor = new Color(red, green, blue);
-
-        lblTurn.setForeground(dynamicColor);
-
-        if (remaining <= 1) {
-            lblTurn.setFont(new Font("SansSerif", Font.ITALIC | Font.BOLD, 20));
-        } else {
-            lblTurn.setFont(new Font("SansSerif", Font.BOLD, 18));
-        }
-    }
-
-    private void endGame(boolean isWin) {
-        String status = isWin ? "WINNER" : "GAME OVER";
-        
-        if (isWin) {
-            handleWin();
-        }
-
-        ResultDialog dialog = new ResultDialog(
-            (Frame) SwingUtilities.getWindowAncestor(this),
-            status,
-            engine.calculateFinalScore(),
-            secondsElapsed,
-            engine.getAttemptsUsed(),
-            engine.getTargetNumber()
-        );
-
-        dialog.setVisible(true);
-
-        if (dialog.isRetry()) {
-            initNewGame(mainframe.getSelectedMode());
-        } else {
-            mainframe.showScreen("Welcome");
-        }
-    }
-    
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == btnGuess) handleGuess();
-        if (e.getSource() == btnBack) {
-            gameTimer.stop();
-            mainframe.showScreen("Welcome");
-        }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
     }
 }

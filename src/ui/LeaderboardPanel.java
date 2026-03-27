@@ -14,8 +14,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
     private Image backgroundImage;
     private JButton btnBack;
     private JTable table;
-    private DefaultTableModel model;
-    private List <Object[]> data; 
+    private DefaultTableModel model; 
 
     public LeaderboardPanel(MainFrame frame) {
         this.mainframe = frame;
@@ -115,9 +114,9 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         model.setRowCount(0); 
 
         database.GameDAO dao = new database.GameDAO();
-        data = dao.getTopScores(); 
+        List<Object[]> list = dao.getTopScores(); 
         
-        for (Object[] row : data) {
+        for (Object[] row : list) {
             model.addRow(row);
         }
     }

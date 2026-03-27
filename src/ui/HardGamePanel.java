@@ -22,7 +22,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
     private HardModeEngine engine;
     private GameDAO dao; 
     
-    // Constants
     private static final String GREEN = "G";
     private static final String YELLOW = "Y";
     private static final Color COLOR_GREEN = new Color(46, 204, 113);
@@ -115,7 +114,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
         txtInput.setPreferredSize(new Dimension(200, 55)); 
         txtInput.setFont(new Font("SansSerif", Font.BOLD, 30));
         txtInput.setHorizontalAlignment(JTextField.CENTER);
-        // Hint cho người dùng
         txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "#####");
         txtInput.putClientProperty(FlatClientProperties.STYLE, "arc: 20");
         
@@ -135,7 +133,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
         add(controlPanel, gbc);
         
         btnGuess.addActionListener(this);
-        // Nhấn Enter để đoán 
         txtInput.addActionListener(e -> handleGuess());
     }
     
@@ -195,7 +192,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
     }
 
     private void handleWin() {
-        // LƯU VÀO DATABASE
         dao.insertGameResult(engine.calculateFinalScore(), "HARD", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
     }
 
@@ -213,7 +209,6 @@ public class HardGamePanel extends JPanel implements ActionListener {
             box.setFont(new Font("SansSerif", Font.BOLD, 22));
             box.setForeground(Color.WHITE);
 
-            // Đổ màu theo kết quả Engine trả về
             switch (colors[i]) {
                 case GREEN:
                     box.setBackground(COLOR_GREEN);

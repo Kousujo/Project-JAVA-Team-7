@@ -4,8 +4,7 @@ import java.sql.*;
 import java.util.List;
 import java.util.ArrayList;
 
-public class GameDAO {
-    private List <Object[]> list; 
+public class GameDAO { 
 
     public int getHighestScore() {
         String sql = "SELECT MAX(score) AS max_score FROM high_scores";
@@ -18,13 +17,13 @@ public class GameDAO {
                 return rs.getInt("max_score");
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lấy kỷ lục: " + e.getMessage());
+            System.err.println("Loi khi lay data ky luc: " + e.getMessage());
         }
         return 0;
     }
 
     public List <Object[]> getTopScores() {
-        list = new ArrayList<>();
+        List<Object[]> list = new ArrayList<>();
         String sql = "SELECT TOP 10 score, mode, secret_number, attempts_used, time_spent " +
                     "FROM high_scores ORDER BY score DESC, time_spent ASC";
 
@@ -44,7 +43,7 @@ public class GameDAO {
                 });
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi load bảng xếp hạng: " + e.getMessage());
+            System.err.println("Loi load bang xep hang: " + e.getMessage());
         }
         return list;
     }
@@ -64,7 +63,7 @@ public class GameDAO {
             int rowsAffected = ps.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi lưu kết quả game: " + e.getMessage());
+            System.err.println("Loi khi luu ket qua game: " + e.getMessage());
             return false;
         }
     }

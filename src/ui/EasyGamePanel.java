@@ -169,6 +169,7 @@ public class EasyGamePanel extends JPanel implements ActionListener {
         add(lblWarning, gbc);
         
         btnGuess.addActionListener(this);
+        txtInput.addActionListener(e -> handleGuess());
     }
     
     private void setupBackButton() {

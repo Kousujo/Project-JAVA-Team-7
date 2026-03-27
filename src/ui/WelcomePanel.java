@@ -20,8 +20,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
 
         setLayout(new GridBagLayout()); 
         GridBagConstraints gbc = new GridBagConstraints(); 
-        Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
-
+        
         btnLeaderboard = new JButton("🏆");
         btnLeaderboard.setToolTipText("Bảng xếp hạng");
         btnLeaderboard.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -71,12 +70,11 @@ public class WelcomePanel extends JPanel implements ActionListener {
         statusPanel.setOpaque(false);
         statusPanel.setBorder(BorderFactory.createEmptyBorder(15, 45, 15, 45));
 
-        lblname = new JLabel("👤 Chế độ: Offline"); lblname.setFont(mainFont);
-        lblscore = new JLabel("⭐ Kỷ lục: 0"); lblscore.setFont(mainFont);
+        lblname = new JLabel("👤 Chế độ: Offline"); lblname.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        lblscore = new JLabel("⭐ Kỷ lục: 0"); lblscore.setFont(new Font("SansSerif", Font.PLAIN, 18));
         
-        Color statusTextColor = new Color(50, 50, 50);
-        lblname.setForeground(statusTextColor); 
-        lblscore.setForeground(statusTextColor); 
+        lblname.setForeground(new Color(50, 50, 50)); 
+        lblscore.setForeground(new Color(50, 50, 50)); 
 
         statusPanel.add(lblname);
         statusPanel.add(lblscore);

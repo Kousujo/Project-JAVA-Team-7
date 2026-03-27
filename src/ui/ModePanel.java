@@ -21,9 +21,7 @@ public class ModePanel extends JPanel implements ActionListener {
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
-        Color statusTextColor = new Color(50, 50, 50);
-
+        
         lblHeader = new MultiLineOutlineLabel("SELECT\nMODE", SwingConstants.CENTER); // Gọn hơn
         lblHeader.setFont(new Font("SansSerif", Font.BOLD, 60));
         lblHeader.setForeground(Color.WHITE);
@@ -52,9 +50,21 @@ public class ModePanel extends JPanel implements ActionListener {
         rbNormal = new JRadioButton("NORMAL ( 1000-9999 )");
         rbHard = new JRadioButton("HARD ( 00000-99999 )");
 
-        setupRadioButton(rbEasy, mainFont, statusTextColor);
-        setupRadioButton(rbNormal, mainFont, statusTextColor);
-        setupRadioButton(rbHard, mainFont, statusTextColor);
+        rbEasy.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        rbEasy.setForeground(new Color(50, 50, 50));
+        rbEasy.setOpaque(false);
+        rbEasy.setFocusPainted(false);
+
+        rbNormal.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        rbNormal.setForeground(new Color(50, 50, 50));
+        rbNormal.setOpaque(false);
+        rbNormal.setFocusPainted(false);
+
+        rbHard.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        rbHard.setForeground(new Color(50, 50, 50));
+        rbHard.setOpaque(false);
+        rbHard.setFocusPainted(false);
+
         rbEasy.setSelected(true); 
 
         group = new ButtonGroup();
@@ -95,13 +105,6 @@ public class ModePanel extends JPanel implements ActionListener {
 
         btnStart.addActionListener(this);
         btnBack.addActionListener(this);
-    }
-
-    private void setupRadioButton(JRadioButton rb, Font font, Color color) {
-        rb.setFont(font);
-        rb.setForeground(color);
-        rb.setOpaque(false);
-        rb.setFocusPainted(false);
     }
 
     @Override

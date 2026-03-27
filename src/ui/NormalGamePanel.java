@@ -24,7 +24,6 @@ public class NormalGamePanel extends JPanel implements ActionListener {
     private NormalModeEngine engine;
     private GameDAO dao;
     
-    // Constants
     private static final String MATCH = "MATCH";
     private static final String UP = "UP";
     private static final String DOWN = "DOWN";
@@ -160,6 +159,7 @@ public class NormalGamePanel extends JPanel implements ActionListener {
         add(controlPanel, gbc);
         
         btnGuess.addActionListener(this);
+        txtInput.addActionListener(e -> handleGuess());
     }
     
     private void setupBackButton() {
@@ -263,7 +263,6 @@ public class NormalGamePanel extends JPanel implements ActionListener {
     }
 
     private void handleWin() {
-        // LƯU VÀO DATABASE
         dao.insertGameResult(engine.calculateFinalScore(), "NORMAL", engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
     }
 

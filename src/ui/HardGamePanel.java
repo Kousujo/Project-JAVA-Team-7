@@ -97,10 +97,7 @@ public class HardGamePanel extends BaseGamePanel {
     @Override
     protected void handleGuess() {
         String input = txtInput.getText().trim();
-        if (input.length() != 5 || !input.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "Mật mã phải có đúng 5 chữ số!");
-            return;
-        }
+        if (!validateInput(input, 5)) return;
 
         int guess = Integer.parseInt(input);
         String result = engine.checkGuess(guess);

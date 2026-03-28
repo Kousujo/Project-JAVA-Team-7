@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class EasyGamePanel extends BaseGamePanel {
-    private JLabel lblFeedback, lblWarning;
+    private JLabel lblFeedback;
     
     private static final String TOO_HIGH = "QUÁ CAO";
     private static final String TOO_LOW = "QUÁ THẤP";
@@ -59,15 +59,6 @@ public class EasyGamePanel extends BaseGamePanel {
         gbc.weighty = 0.15;
         gbc.fill = GridBagConstraints.NONE;
         add(lblFeedback, gbc);
-
-        lblWarning = new JLabel("", SwingConstants.CENTER);
-        lblWarning.setForeground(Color.RED);
-        lblWarning.setFont(new Font("SansSerif", Font.BOLD, 14));
-        lblWarning.setVisible(false);
-
-        gbc.gridy = 5; 
-        gbc.weighty = 0.02;
-        add(lblWarning, gbc);
     }
     
     @Override
@@ -127,14 +118,16 @@ public class EasyGamePanel extends BaseGamePanel {
     @Override
     protected void handleGuess() {
         String input = txtInput.getText().trim();
-        if (!isValidInput(input)) {
-            lblWarning.setText("⚠️ Vui lòng chỉ nhập số!");
+        if (!validateInput(input, 0)) return;
+
+        int guess;
+        try {
+            guess = Integer.parseInt(input);
+        } catch (NumberFormatException ex) {
+            lblWarning.setText("⚠️ Số nhập vào quá lớn! Hãy nhập từ 0-100.");
             lblWarning.setVisible(true);
             return;
         }
-        lblWarning.setVisible(false);
-
-        int guess = Integer.parseInt(input);
         String result = engine.checkGuess(guess);
 
         updateTurnDisplay();
@@ -146,10 +139,6 @@ public class EasyGamePanel extends BaseGamePanel {
             gameTimer.stop();
             endGame(engine.isWin(), "EASY");
         }
-    }
-    
-    private boolean isValidInput(String input) {
-        return input.matches("\\d+");
     }
     
     private void updateFeedback(String result) {

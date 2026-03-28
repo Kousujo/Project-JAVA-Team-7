@@ -75,7 +75,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
                     String mode = model.getValueAt(row, 2).toString();
                     int time = (int) model.getValueAt(row, 3);
                     int turns = (int) model.getValueAt(row, 4);
-                    int secret = (int) model.getValueAt(row, 5);
+                    String secret = (String) model.getValueAt(row, 5);
                     
                     showPlayerStats(score, mode, time, turns, secret);
                 }
@@ -121,7 +121,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void showPlayerStats(int score, String mode, int time, int turns, int secret) {
+    private void showPlayerStats(int score, String mode, int time, int turns, String secret) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
         dialog.setUndecorated(true);
         dialog.setBackground(new Color(0, 0, 0, 0));

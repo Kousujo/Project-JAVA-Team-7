@@ -16,7 +16,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
     protected JScrollPane scrollPane;
     protected JTextField txtInput;
     protected JButton btnGuess, btnBack;
-    protected JLabel lblTurn, lblTime;
+    protected JLabel lblTurn, lblTime, lblWarning;
     protected Timer gameTimer;
     
     protected int secondsElapsed = 0;
@@ -31,13 +31,14 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
     }
 
     protected void buildUI() {
-        setupTitle();        
-        setupStats();        
-        setupFeedback();  
-        setupHistory();   
-        setupControls();    
-        setupBackButton();  
-        setupTimer();       
+        setupTitle();    
+        setupStats();
+        setupFeedback();
+        setupHistory();
+        setupControls();
+        setupWarning();
+        setupBackButton();
+        setupTimer();   
     }
 
     protected abstract void setupTitle();
@@ -127,6 +128,18 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         txtInput.addActionListener(e -> handleGuess());
     }
 
+    protected void setupWarning() {
+        lblWarning = new JLabel("", SwingConstants.CENTER);
+        lblWarning.setForeground(Color.RED);
+        lblWarning.setFont(new Font("SansSerif", Font.BOLD, 14));
+        lblWarning.setVisible(false);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.weighty = 0.02;
+        add(lblWarning, gbc);
+    }
+
     protected void setupBackButton() {
         btnBack = new JButton("THOÁT");
         btnBack.setPreferredSize(new Dimension(150, 45));
@@ -134,7 +147,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff; arc: 20");
         
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 5;
+        gbc.gridx = 0; gbc.gridy = 6;
         gbc.weighty = 0.1;
         gbc.insets = new Insets(10, 0, 30, 0);
         add(btnBack, gbc);
@@ -142,11 +155,17 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         btnBack.addActionListener(this);
     }
 
-    protected void setupTimer() {
+    public void setupTimer() {
         gameTimer = new Timer(1000, e -> {
             secondsElapsed++;
             lblTime.setText("[ " + secondsElapsed + "s ]");
         });
+    }
+
+    public void stopGameTimer() {
+        if (gameTimer != null && gameTimer.isRunning()) {
+            gameTimer.stop();
+        }
     }
 
     protected void updateTurnDisplay() {
@@ -175,7 +194,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         String status = isWin ? "WINNER" : "GAME OVER";
         
         if (isWin) {
-            dao.insertGameResult(engine.calculateFinalScore(), modeName, engine.getTargetNumber(), engine.getAttemptsUsed(), secondsElapsed);
+            dao.insertGameResult(engine.calculateFinalScore(), modeName, engine.getSecretCode(), engine.getAttemptsUsed(), secondsElapsed);
         }
 
         ResultDialog dialog = new ResultDialog(
@@ -184,7 +203,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
             engine.calculateFinalScore(),
             secondsElapsed,
             engine.getAttemptsUsed(),
-            engine.getTargetNumber()
+            engine.getSecretCode()
         );
 
         dialog.setVisible(true);
@@ -194,6 +213,26 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         } else {
             mainframe.showScreen("Mode");
         }
+    }
+
+    protected boolean validateInput(String input, int requiredLength) {
+        if (input.isEmpty()) {
+            lblWarning.setText("⚠️ Không được để trống!");
+            lblWarning.setVisible(true);
+            return false;
+        }
+        if (!input.matches("\\d+")) {
+            lblWarning.setText("⚠️ Vui lòng chỉ nhập số!");
+            lblWarning.setVisible(true);
+            return false;
+        }
+        if (requiredLength > 0 && input.length() != requiredLength) {
+            lblWarning.setText("⚠️ Mật mã phải có đúng " + requiredLength + " chữ số!");
+            lblWarning.setVisible(true);
+            return false;
+        }
+        lblWarning.setVisible(false);
+        return true;
     }
 
     @Override

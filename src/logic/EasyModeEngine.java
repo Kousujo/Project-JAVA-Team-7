@@ -13,6 +13,11 @@ public class EasyModeEngine extends AbstractGameEngine {
     }
 
     @Override
+    public String getSecretCode() {
+        return String.valueOf(targetNumber);
+    }
+
+    @Override
     public String checkGuess(int guess) {
         if (isGameOver) return "TRÒ CHƠI ĐÃ KẾT THÚC!";
         attemptsUsed++;

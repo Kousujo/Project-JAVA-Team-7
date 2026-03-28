@@ -81,6 +81,17 @@ public class NormalGamePanel extends BaseGamePanel {
         gbc.weighty = 0.15;
         gbc.fill = GridBagConstraints.NONE;
         add(feedbackPanel, gbc);
+
+        lblWarning = new JLabel("", SwingConstants.CENTER);
+        lblWarning.setForeground(Color.RED);
+        lblWarning.setFont(new Font("SansSerif", Font.BOLD, 14));
+        lblWarning.setVisible(false);
+
+        GridBagConstraints gbcWarn = new GridBagConstraints();
+        gbcWarn.gridx = 0; 
+        gbcWarn.gridy = 6;
+        gbcWarn.weighty = 0.02;
+        add(lblWarning, gbcWarn);
     }
     
     @Override
@@ -130,10 +141,7 @@ public class NormalGamePanel extends BaseGamePanel {
     @Override
     protected void handleGuess() {
         String input = txtInput.getText().trim();
-        if (input.length() != 4 || !input.matches("\\d+")) {
-            JOptionPane.showMessageDialog(this, "Hãy nhập đúng 4 chữ số!");
-            return;
-        }
+        if (!validateInput(input, 4)) return;
 
         int guess = Integer.parseInt(input);
         String result = engine.checkGuess(guess);

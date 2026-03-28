@@ -39,7 +39,7 @@ public class GameDAO {
                     rs.getString("mode"),           
                     rs.getInt("time_spent"),        
                     rs.getInt("attempts_used"),     
-                    rs.getInt("secret_number")      
+                    rs.getString("secret_number")      
                 });
             }
         } catch (SQLException e) {
@@ -48,7 +48,7 @@ public class GameDAO {
         return list;
     }
 
-    public boolean insertGameResult(int score, String mode, int secret, int attempts, int time) {
+    public boolean insertGameResult(int score, String mode, String secret, int attempts, int time) {
         String sql = "INSERT INTO high_scores (score, mode, secret_number, attempts_used, time_spent) VALUES (?, ?, ?, ?, ?)";
         
         try (Connection conn = ConnectionDB.connectToDatabase();
@@ -56,7 +56,7 @@ public class GameDAO {
             
             ps.setInt(1, score);
             ps.setString(2, mode);
-            ps.setInt(3, secret);
+            ps.setString(3, secret);
             ps.setInt(4, attempts);
             ps.setInt(5, time);
             

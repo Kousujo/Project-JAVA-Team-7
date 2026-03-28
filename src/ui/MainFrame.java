@@ -119,9 +119,16 @@ public class MainFrame extends JFrame implements ActionListener {
         itemAbout.addActionListener(this);
     }
 
+    public void stopAllTimers() {
+        easyGamePanel.stopGameTimer();
+        normalGamePanel.stopGameTimer();
+        hardGamePanel.stopGameTimer();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == itemReset) {
+            stopAllTimers();
             this.showScreen("Welcome");
         }
         else if (e.getSource() == itemExit) {

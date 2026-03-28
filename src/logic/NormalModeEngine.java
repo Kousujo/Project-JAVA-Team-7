@@ -13,6 +13,11 @@ public class NormalModeEngine extends AbstractGameEngine {
         this.currentScore = 0;
         this.hasBonus = false;
     }
+    
+    @Override
+    public String getSecretCode() {
+        return String.valueOf(targetNumber);
+    }
 
     @Override
     public String checkGuess(int guess) {

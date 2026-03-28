@@ -7,7 +7,7 @@ import java.awt.*;
 public class ResultDialog extends JDialog {
     private boolean retry = false;
 
-    public ResultDialog(Frame owner, String status, int score, int time, int turns, int secret ) {
+    public ResultDialog(Frame owner, String status, int score, int time, int turns, String secret ) {
         super(owner, true);
         setUndecorated(true);
         setBackground(new Color(0, 0, 0, 0));

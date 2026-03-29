@@ -15,10 +15,10 @@ public abstract class AbstractGameEngine {
         this.random = new Random();
     }
 
-    public abstract String getSecretCode(); 
     public abstract void startNewGame();
     public abstract String checkGuess(int guess);
     public abstract int calculateFinalScore();
+    public abstract String getSecretCode();
 
     public boolean isGameOver() { return isGameOver; }
     public boolean isWin() { return isWin; }

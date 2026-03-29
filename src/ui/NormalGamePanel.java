@@ -1,7 +1,6 @@
 package ui;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import graphic.MultiLineOutlineLabel;
 import logic.NormalModeEngine;
 import javax.swing.*;
 import java.awt.*;
@@ -22,19 +21,21 @@ public class NormalGamePanel extends BaseGamePanel {
         this.engine = new NormalModeEngine();
         buildUI();
     }
+
+    @Override
+    public void initNewGame(String mode) {
+        super.initNewGame(mode);
+        lblFeedbackLeft.setText("LEFT half");
+        lblFeedbackRight.setText("RIGHT half");
+        lblFeedbackLeft.setForeground(Color.WHITE);
+        lblFeedbackRight.setForeground(Color.WHITE);
+        lblBonus.setText("BONUS: READY");
+        lblBonus.setForeground(Color.LIGHT_GRAY);
+    }
     
     @Override
     protected void setupTitle() {
-        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("NORMAL GUESS", SwingConstants.CENTER);
-        lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
-        lblModeName.setForeground(new Color(230,226,46));
-        lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0; 
-        gbc.weighty = 0.1;
-        gbc.insets = new Insets(70, 0, 0, 0);
-        add(lblModeName, gbc);
+        super.setupTitle("NORMAL GUESS", new Color(230, 226, 46));
     }
     
     @Override
@@ -63,6 +64,16 @@ public class NormalGamePanel extends BaseGamePanel {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(0, 85, 10, 85);
         add(statsPanel, gbc);
+    }
+
+    @Override
+    protected void setupHistory() {
+        buildHistoryUI(
+            new Color(0, 0, 0, 100), 
+            new Dimension(400, 250), 
+            0.4, 
+            new Insets(10, 50, 20, 50)
+        );
     }
     
     @Override
@@ -93,12 +104,6 @@ public class NormalGamePanel extends BaseGamePanel {
         gbcWarn.weighty = 0.02;
         add(lblWarning, gbcWarn);
     }
-    
-    @Override
-    protected void setupControls() {
-        super.setupControls();
-        txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "1000-9999");
-    }
 
     private JLabel createFeedbackLabel(String text) {
         JLabel lbl = new JLabel(text, SwingConstants.CENTER) {
@@ -119,23 +124,10 @@ public class NormalGamePanel extends BaseGamePanel {
         return lbl;
     }
 
-    public void initNewGame(String mode) {
-        engine.startNewGame(); 
-        secondsElapsed = 0;
-
-        updateTurnDisplay();
-
-        lblFeedbackLeft.setText("LEFT half");
-        lblFeedbackRight.setText("RIGHT half");
-        lblFeedbackLeft.setForeground(Color.WHITE);
-        lblFeedbackRight.setForeground(Color.WHITE);
-        lblBonus.setText("BONUS: READY");
-        lblBonus.setForeground(Color.LIGHT_GRAY);
-        
-        historyBox.removeAll();
-        historyBox.repaint();
-        txtInput.setText("");
-        gameTimer.restart();
+    @Override
+    protected void setupControls() {
+        super.setupControls();
+        txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "1000-9999");
     }
 
     @Override
@@ -184,11 +176,6 @@ public class NormalGamePanel extends BaseGamePanel {
             vertical.setValue(vertical.getMaximum());
         });
 
-        txtInput.setText("");
-
-        if (engine.isGameOver()) {
-            gameTimer.stop();
-            super.endGame(engine.isWin(), "NORMAL"); 
-        }
+        finalizeTurn("NORMAL");
     }
 }

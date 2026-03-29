@@ -31,7 +31,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
     }
 
     protected void buildUI() {
-        setupTitle();    
+        setupTitle();
         setupStats();
         setupFeedback();
         setupHistory();
@@ -41,10 +41,35 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         setupTimer();   
     }
 
-    protected abstract void setupTitle();
+    protected void setupTitle() {}
+    protected abstract void setupHistory();
     protected abstract void setupFeedback();
     protected abstract void handleGuess();
-    public abstract void initNewGame(String mode);
+
+    public void initNewGame(String mode) {
+        if (engine != null) {
+            engine.startNewGame();
+        }
+        secondsElapsed = 0;
+        updateTurnDisplay();
+        historyBox.removeAll();
+        historyBox.repaint();
+        txtInput.setText("");
+        gameTimer.restart();
+    }
+
+    protected void setupTitle(String titleText, Color titleColor) {
+        graphic.MultiLineOutlineLabel lblModeName = new graphic.MultiLineOutlineLabel(titleText, SwingConstants.CENTER);
+        lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
+        lblModeName.setForeground(titleColor);
+        lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0; gbc.gridy = 0; 
+        gbc.weighty = 0.1;
+        gbc.insets = new Insets(70, 0, 0, 0);
+        add(lblModeName, gbc);
+    }
 
     protected void setupStats() {
         JPanel statsPanel = new JPanel(new BorderLayout());
@@ -67,19 +92,19 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         add(statsPanel, gbc);
     }
 
-    protected void setupHistory() {
+    protected void buildHistoryUI(Color bgColor, Dimension preferredSize, double weighty, Insets insets) {
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(0, 0, 0, 100)); // Màu nền tối mờ, lớp con có thể override nếu muốn
+                g2.setColor(bgColor);
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.dispose();
             }
         };
         glassCard.setOpaque(false);
-        glassCard.setPreferredSize(new Dimension(400, 250));
+        glassCard.setPreferredSize(preferredSize);
 
         historyBox = new JPanel();
         historyBox.setLayout(new BoxLayout(historyBox, BoxLayout.Y_AXIS));
@@ -94,8 +119,8 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0; gbc.gridy = 3;
-        gbc.weighty = 0.4;
-        gbc.insets = new Insets(10, 50, 20, 50);
+        gbc.weighty = weighty; 
+        gbc.insets = insets;   
         add(glassCard, gbc);
     }
 
@@ -212,6 +237,15 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
             initNewGame(mainframe.getSelectedMode());
         } else {
             mainframe.showScreen("Mode");
+        }
+    }
+
+    protected void finalizeTurn(String modeName) {
+        txtInput.setText("");
+
+        if (engine != null && engine.isGameOver()) {
+            stopGameTimer();
+            endGame(engine.isWin(), modeName);
         }
     }
 

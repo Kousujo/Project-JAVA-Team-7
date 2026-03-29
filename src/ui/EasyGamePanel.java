@@ -1,7 +1,6 @@
 package ui;
 
 import com.formdev.flatlaf.FlatClientProperties;
-import graphic.MultiLineOutlineLabel;
 import logic.EasyModeEngine;
 import javax.swing.*;
 import java.awt.*;
@@ -21,19 +20,17 @@ public class EasyGamePanel extends BaseGamePanel {
         this.engine = new EasyModeEngine();
         buildUI();
     }
+
+    @Override
+    public void initNewGame(String mode) {
+        super.initNewGame(mode);
+        lblFeedback.setText("NHẬP SỐ TỪ 0 - 100");
+        lblFeedback.setForeground(Color.WHITE);
+    }
     
     @Override
     protected void setupTitle() {
-        MultiLineOutlineLabel lblModeName = new MultiLineOutlineLabel("EASY GUESS", SwingConstants.CENTER);
-        lblModeName.setFont(new Font("SansSerif", Font.BOLD, 60)); 
-        lblModeName.setForeground(new Color(143,185,53));
-        lblModeName.setOutlineColor(new Color(0, 0, 0, 200));
-        
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 0; 
-        gbc.weighty = 0.1;
-        gbc.insets = new Insets(70, 0, 0, 0);
-        add(lblModeName, gbc);
+        super.setupTitle("EASY GUESS", new Color(143, 185, 53));
     }
     
     @Override
@@ -63,35 +60,12 @@ public class EasyGamePanel extends BaseGamePanel {
     
     @Override
     protected void setupHistory() {
-        JPanel glassCard = new JPanel(new BorderLayout()) {
-            @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(255, 255, 255, 140)); 
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
-                g2.dispose();
-            }
-        };
-        glassCard.setOpaque(false);
-        glassCard.setPreferredSize(new Dimension(350, 200));
-
-        historyBox = new JPanel();
-        historyBox.setLayout(new BoxLayout(historyBox, BoxLayout.Y_AXIS));
-        historyBox.setOpaque(false);
-
-        scrollPane = new JScrollPane(historyBox);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-        scrollPane.setBorder(null);
-
-        glassCard.add(scrollPane, BorderLayout.CENTER);
-
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0; gbc.gridy = 3;
-        gbc.weighty = 0.3;
-        gbc.insets = new Insets(20, 65, 20, 65);
-        add(glassCard, gbc);
+        buildHistoryUI(
+            new Color(255, 255, 255, 140), 
+            new Dimension(350, 200), 
+            0.3, 
+            new Insets(20, 65, 20, 65)
+        );
     }
     
     @Override
@@ -100,19 +74,6 @@ public class EasyGamePanel extends BaseGamePanel {
         txtInput.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT, "0-100");
         btnGuess.setText("ĐOÁN!");
         btnGuess.setBackground(new Color(70, 130, 180));
-    }
-
-    public void initNewGame(String mode) {
-        engine.startNewGame(); 
-        secondsElapsed = 0;
-
-        updateTurnDisplay();
-        lblFeedback.setText("NHẬP SỐ TỪ 0 - 100");
-        lblFeedback.setForeground(Color.WHITE);
-        historyBox.removeAll();
-        historyBox.repaint();
-        txtInput.setText("");
-        gameTimer.restart();
     }
 
     @Override
@@ -133,12 +94,7 @@ public class EasyGamePanel extends BaseGamePanel {
         updateTurnDisplay();
         addHistoryRow("Lượt " + engine.getAttemptsUsed() + ": [" + guess + "] -> " + result);
         updateFeedback(result);
-        txtInput.setText("");
-
-        if (engine.isGameOver()) {
-            gameTimer.stop();
-            endGame(engine.isWin(), "EASY");
-        }
+        finalizeTurn("EASY");
     }
     
     private void updateFeedback(String result) {

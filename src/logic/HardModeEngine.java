@@ -73,13 +73,14 @@ public class HardModeEngine extends AbstractGameEngine {
         return result[0] + "," + result[1] + "," + result[2] + "," + result[3] + "," + result[4];
     }
 
-    public String getSecretCode() {
-        return targetString;
-    }
-
     @Override
     public int calculateFinalScore() {
         if (!isWin) return 0;
         return (9 - attemptsUsed) * 500;
+    }
+
+    @Override
+    public String getSecretCode() {
+        return targetString;
     }
 }

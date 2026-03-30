@@ -51,9 +51,9 @@ public class MainFrame extends JFrame implements ActionListener {
 
     public void showScreen(String screenName) {
         if (screenName.equals("Leaderboard")) {
-            leaderboardPanel.refreshData(); // Làm mới bảng xếp hạng trước khi hiện
+            leaderboardPanel.refreshData(); 
         } else if (screenName.equals("Welcome")) {
-            welcomePanel.refreshStatus(); // Làm mới kỷ lục cá nhân ở màn hình chính
+            welcomePanel.refreshStatus();
         }
         
         cardLayout.show(mainPanel, screenName);
@@ -73,7 +73,6 @@ public class MainFrame extends JFrame implements ActionListener {
                 break;
                 
             case "NORMAL":
-                // Khởi tạo logic cho bản Vừa (MediumModeEngine) và chuyển màn hình
                 normalGamePanel.initNewGame(mode);
                 showScreen("Normal");
                 break;
@@ -87,8 +86,6 @@ public class MainFrame extends JFrame implements ActionListener {
                 showScreen("Welcome");
                 break;
         }
-        
-        System.out.println("Hệ thống: Bắt đầu trận đấu mới - Chế độ: " + mode);
     }
 
     private void initMenuBar() {
@@ -122,9 +119,16 @@ public class MainFrame extends JFrame implements ActionListener {
         itemAbout.addActionListener(this);
     }
 
+    public void stopAllTimers() {
+        easyGamePanel.stopGameTimer();
+        normalGamePanel.stopGameTimer();
+        hardGamePanel.stopGameTimer();
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == itemReset) {
+            stopAllTimers();
             this.showScreen("Welcome");
         }
         else if (e.getSource() == itemExit) {

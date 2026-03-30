@@ -1,51 +1,50 @@
 package logic;
 
 public class HardModeEngine extends AbstractGameEngine {
-    private String targetString; // Dùng chuỗi thay vì số nguyên để dễ xử lý 5 chữ số (kể cả số 0 đứng đầu)
+    private String targetString; 
 
     @Override
     public void startNewGame() {
-        // Sinh ngẫu nhiên chuỗi 5 chữ số (từ 00000 đến 99999)
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 5; i++) {
             sb.append(random.nextInt(10));
         }
         this.targetString = sb.toString();
-        this.targetNumber = Integer.parseInt(targetString); // Giữ lại để in ra khi thua
+        this.targetNumber = Integer.parseInt(targetString);
         
         this.attemptsUsed = 0;
-        this.maxAttempts = 8; // Tối đa 8 lượt
+        this.maxAttempts = 7; 
         this.isGameOver = false;
         this.isWin = false;
         this.currentScore = 0;
     }
 
-    // Nhận vào một chuỗi (Ví dụ: "12345")
-    public String checkWordleGuess(String guess) {
+    public String checkGuess(int guess) {
+        String guessStr = String.format("%05d", guess);
+        
         if (isGameOver) return "GAME_OVER";
         attemptsUsed++;
 
-        if (guess.equals(targetString)) {
+        if (guessStr.equals(targetString)) {
             isWin = true;
             isGameOver = true;
             currentScore = calculateFinalScore();
-            return "G,G,G,G,G"; // 5 chữ Xanh lá
+            return "G,G,G,G,G"; 
         }
 
         if (attemptsUsed >= maxAttempts) {
             isGameOver = true;
             currentScore = 0;
-            // Trả về kết quả lượt cuối trước khi báo thua
         }
 
-        return evaluateColors(guess);
+        return evaluateColors(guessStr);
     }
 
 
     private String evaluateColors(String guess) {
         char[] targetChars = targetString.toCharArray();
         char[] guessChars = guess.toCharArray();
-        char[] result = new char[]{'X', 'X', 'X', 'X', 'X'}; // Mặc định là Xám (X)
+        char[] result = new char[]{'X', 'X', 'X', 'X', 'X'}; 
         boolean[] targetUsed = new boolean[5]; // Đánh dấu các số trong đáp án đã bị "ăn"
 
         // BƯỚC 1: Tìm tất cả các ô màu XANH LÁ (G) trước
@@ -74,21 +73,14 @@ public class HardModeEngine extends AbstractGameEngine {
         return result[0] + "," + result[1] + "," + result[2] + "," + result[3] + "," + result[4];
     }
 
-    public String getSecretCode() {
-        return targetString;
-    }
-
     @Override
     public int calculateFinalScore() {
         if (!isWin) return 0;
         return (9 - attemptsUsed) * 500;
     }
-    
-    // Ghi đè hàm cũ để tương thích với AbstractGameEngine (Ép kiểu)
+
     @Override
-    public String checkGuess(int guess) {
-        // Format lại số int thành chuỗi 5 chữ số (thêm số 0 ở đầu nếu cần)
-        String guessStr = String.format("%05d", guess);
-        return checkWordleGuess(guessStr);
+    public String getSecretCode() {
+        return targetString;
     }
 }

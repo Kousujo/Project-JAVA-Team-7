@@ -1,11 +1,11 @@
 package logic;
 
 public class NormalModeEngine extends AbstractGameEngine {
-    private boolean hasBonus; // Cờ đánh dấu đã nhận thưởng chưa
+    private boolean hasBonus; 
 
     @Override
     public void startNewGame() {
-        this.targetNumber = 1000 + random.nextInt(9000); // 1000 đến 9999
+        this.targetNumber = 1000 + random.nextInt(9000); 
         this.attemptsUsed = 0;
         this.maxAttempts = 10;
         this.isGameOver = false;
@@ -57,5 +57,10 @@ public class NormalModeEngine extends AbstractGameEngine {
         int score = (11 - attemptsUsed) * 150;
         if (hasBonus) score += 200;
         return score;
+    }
+
+    @Override
+    public String getSecretCode() {
+        return String.valueOf(targetNumber);
     }
 }

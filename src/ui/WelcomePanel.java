@@ -20,8 +20,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
 
         setLayout(new GridBagLayout()); 
         GridBagConstraints gbc = new GridBagConstraints(); 
-        Font mainFont = new Font("SansSerif", Font.PLAIN, 18);
-
+        
         btnLeaderboard = new JButton("🏆");
         btnLeaderboard.setToolTipText("Bảng xếp hạng");
         btnLeaderboard.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -41,7 +40,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
         lbltitle.setForeground(Color.WHITE);
         lbltitle.setOutlineColor(new Color(0, 0, 0, 180)); 
 
-        lblsubtitle = new JLabel("Chọn số bạn nghĩ là đúng");
+        lblsubtitle = new JLabel("Thử thách Đoán số");
         lblsubtitle.setFont(new Font("SansSerif", Font.ITALIC, 22));
         lblsubtitle.setForeground(new Color(0, 0, 0));
         lblsubtitle.setHorizontalAlignment(SwingConstants.CENTER);
@@ -71,12 +70,11 @@ public class WelcomePanel extends JPanel implements ActionListener {
         statusPanel.setOpaque(false);
         statusPanel.setBorder(BorderFactory.createEmptyBorder(15, 45, 15, 45));
 
-        lblname = new JLabel("👤 Chế độ: Offline"); lblname.setFont(mainFont);
-        lblscore = new JLabel("⭐ Kỷ lục: 0"); lblscore.setFont(mainFont);
+        lblname = new JLabel("👤 Chế độ: Offline"); lblname.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        lblscore = new JLabel("⭐ Kỷ lục: 0"); lblscore.setFont(new Font("SansSerif", Font.PLAIN, 18));
         
-        Color statusTextColor = new Color(50, 50, 50);
-        lblname.setForeground(statusTextColor); 
-        lblscore.setForeground(statusTextColor); 
+        lblname.setForeground(new Color(50, 50, 50)); 
+        lblscore.setForeground(new Color(50, 50, 50)); 
 
         statusPanel.add(lblname);
         statusPanel.add(lblscore);
@@ -87,8 +85,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
         gbc.insets = new Insets(0, 0, 0, 0);
         add(statusPanel, gbc);
 
-        btnNewGame = new JButton("START");
-        btnNewGame.setFont(new Font("SansSerif", Font.BOLD, 22));
+        btnNewGame = new JButton("START GAME");
+        btnNewGame.setFont(new Font("SansSerif", Font.BOLD, 26));
         btnNewGame.setPreferredSize(new Dimension(250, 60));
         btnNewGame.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
         btnNewGame.setBackground(new Color(70, 130, 180));
@@ -123,18 +121,16 @@ public class WelcomePanel extends JPanel implements ActionListener {
         btnNewGame.addActionListener(this);
         btnLeaderboard.addActionListener(this);
 
-        refreshStatus(); // Cập nhật thông tin ban đầu khi khởi tạo giao diện
+        refreshStatus(); 
     }
 
-   // Sửa lại hàm trong WelcomePanel.java
     public void refreshStatus() {
-        // Khởi tạo DAO để lấy dữ liệu
         database.GameDAO dao = new database.GameDAO();
         int highscore = dao.getHighestScore();
         
-        // Cập nhật lên giao diện
         lblscore.setText("⭐ Kỷ lục: " + highscore);
     }
+    
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

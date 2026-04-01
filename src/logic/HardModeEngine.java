@@ -91,4 +91,8 @@ public class HardModeEngine extends AbstractGameEngine {
         String guessStr = String.format("%05d", guess);
         return checkWordleGuess(guessStr);
     }
+
+    public int getTargetNumber() {
+        return this.targetNumber;
+    }
 }

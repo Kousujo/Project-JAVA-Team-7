@@ -133,6 +133,7 @@ public class HardGamePanel extends JPanel implements ActionListener {
     private void handleGuess() {
         String input = txtInput.getText().trim();
         if (input.length() != 5 || !input.matches("\\d+")) {
+            logic.SoundManager.playSound("assets/wrong.wav"); // Phát âm thanh báo lỗi
             JOptionPane.showMessageDialog(this, "Mật mã phải có đúng 5 chữ số!");
             return;
         }
@@ -220,6 +221,11 @@ public class HardGamePanel extends JPanel implements ActionListener {
     private void endGame(boolean isWin) {
         String status = isWin ? "WINNER" : "GAME OVER";
         int finalScore = engine.calculateFinalScore();
+        
+        // Phát âm thanh thắng cuộc
+        if (isWin) {
+            logic.SoundManager.playSound("assets/win.wav");
+        }
 
         ResultDialog dialog = new ResultDialog(
             (Frame) SwingUtilities.getWindowAncestor(this),
@@ -243,6 +249,8 @@ public class HardGamePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav"); // Phát tiếng click
+        
         if (e.getSource() == btnGuess) handleGuess();
         if (e.getSource() == btnBack) {
             gameTimer.stop();

@@ -38,4 +38,8 @@ public class EasyModeEngine extends AbstractGameEngine {
         if (!isWin) return 0;
         return (10 - attemptsUsed ) * 100;
     }
+
+    public int getTargetNumber() {
+        return this.targetNumber;
+    }
 }

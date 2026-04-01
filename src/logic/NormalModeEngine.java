@@ -58,4 +58,8 @@ public class NormalModeEngine extends AbstractGameEngine {
         if (hasBonus) score += 200;
         return score;
     }
+
+    public int getTargetNumber() {
+        return this.targetNumber;
+    }
 }

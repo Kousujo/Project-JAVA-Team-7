@@ -19,6 +19,7 @@ public class MainFrame extends JFrame implements ActionListener {
     private EasyGamePanel easyGamePanel;
     private NormalGamePanel normalGamePanel;
     private HardGamePanel hardGamePanel;
+    private SettingsPanel settingsPanel;
 
     public MainFrame() {
         setTitle("The Chosen Number");
@@ -37,6 +38,7 @@ public class MainFrame extends JFrame implements ActionListener {
         easyGamePanel = new EasyGamePanel(this);
         normalGamePanel = new NormalGamePanel(this);
         hardGamePanel = new HardGamePanel(this);
+        settingsPanel = new SettingsPanel(this);
 
         mainPanel.add(welcomePanel, "Welcome");
         mainPanel.add(modePanel, "Mode");
@@ -44,12 +46,12 @@ public class MainFrame extends JFrame implements ActionListener {
         mainPanel.add(easyGamePanel, "Easy");
         mainPanel.add(normalGamePanel, "Normal");
         mainPanel.add(hardGamePanel, "Hard");
+        mainPanel.add(settingsPanel, "Settings"); 
 
         add(mainPanel);
 
         showScreen("Welcome");
         
-        // Phát nhạc nền ngay khi mở ứng dụng
         SoundManager.playBgm("assets/bgm.wav");
     }  
 
@@ -140,7 +142,7 @@ public class MainFrame extends JFrame implements ActionListener {
             System.exit(0);
         }
         else if (e.getSource() == itemSetting) {
-            JOptionPane.showMessageDialog(this, new SettingsPanel(), "Cài đặt", JOptionPane.PLAIN_MESSAGE);
+            showScreen("Settings");
         }
         else if (e.getSource() == itemAbout) {
             JOptionPane.showMessageDialog(this,"Ứng dụng được phát triển bởi Team 7");

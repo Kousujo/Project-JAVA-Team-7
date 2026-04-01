@@ -21,7 +21,14 @@ public class SoundManager {
             File soundFile = new File(filePath);
             if (soundFile.exists()) {
                 AudioInputStream audioIn = AudioSystem.getAudioInputStream(soundFile); // Đọc file âm thanh
-                Clip clip = AudioSystem.getClip(); // Tạo một Clip để phát âm thanh
+                Clip clip = AudioSystem.getClip();
+
+                clip.addLineListener(event -> {
+                    if (event.getType() == LineEvent.Type.STOP) {
+                        clip.close(); // Giải phóng bộ nhớ ngay khi phát xong
+                    }
+                });
+
                 clip.open(audioIn); // Mở file âm thanh vào Clip
                 clip.start(); // Cứ cho chạy, không cần quan tâm bộ nhớ
             } else {

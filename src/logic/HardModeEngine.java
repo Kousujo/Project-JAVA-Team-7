@@ -83,8 +83,4 @@ public class HardModeEngine extends AbstractGameEngine {
     public String getSecretCode() {
         return targetString;
     }
-
-    public int getTargetNumber() {
-        return this.targetNumber;
-    }
 }

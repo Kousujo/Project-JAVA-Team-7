@@ -63,8 +63,4 @@ public class NormalModeEngine extends AbstractGameEngine {
     public String getSecretCode() {
         return String.valueOf(targetNumber);
     }
-
-    public int getTargetNumber() {
-        return this.targetNumber;
-    }
 }

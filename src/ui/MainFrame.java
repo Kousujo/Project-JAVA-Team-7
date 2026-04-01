@@ -3,13 +3,14 @@ package ui;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import logic.SoundManager;
 
 public class MainFrame extends JFrame implements ActionListener {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private JMenuBar menuBar;
     private JMenu menuSystem, menuSetting, menuHelp;
-    private JMenuItem itemReset, itemExit, itemTheme, itemAbout;
+    private JMenuItem itemReset, itemExit, itemAbout, itemSetting;
     private String selectedMode = "EASY";
     
     private WelcomePanel welcomePanel;
@@ -47,6 +48,9 @@ public class MainFrame extends JFrame implements ActionListener {
         add(mainPanel);
 
         showScreen("Welcome");
+        
+        // Phát nhạc nền ngay khi mở ứng dụng
+        SoundManager.playBgm("assets/bgm.wav");
     }  
 
     public void showScreen(String screenName) {
@@ -100,8 +104,9 @@ public class MainFrame extends JFrame implements ActionListener {
         menuSystem.add(itemExit);
 
         menuSetting = new JMenu("Tùy chỉnh");
-        itemTheme = new JMenuItem("Đổi giao diện");
-        menuSetting.add(itemTheme);
+        itemSetting = new JMenuItem("Cài đặt");
+        
+        menuSetting.add(itemSetting);
 
         menuHelp = new JMenu("Trợ giúp");
         itemAbout = new JMenuItem("Về chúng tôi");
@@ -115,8 +120,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
         itemReset.addActionListener(this);
         itemExit.addActionListener(this);
-        itemTheme.addActionListener(this);
         itemAbout.addActionListener(this);
+        itemSetting.addActionListener(this);
     }
 
     public void stopAllTimers() {
@@ -134,8 +139,8 @@ public class MainFrame extends JFrame implements ActionListener {
         else if (e.getSource() == itemExit) {
             System.exit(0);
         }
-        else if (e.getSource() == itemTheme) {
-            JOptionPane.showMessageDialog(this, "Tính năng hiện tại chưa có!\nVui lòng đợi bản cập nhật sau!");
+        else if (e.getSource() == itemSetting) {
+            JOptionPane.showMessageDialog(this, new SettingsPanel(), "Cài đặt", JOptionPane.PLAIN_MESSAGE);
         }
         else if (e.getSource() == itemAbout) {
             JOptionPane.showMessageDialog(this,"Ứng dụng được phát triển bởi Team 7");

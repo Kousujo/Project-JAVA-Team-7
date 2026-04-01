@@ -178,6 +178,8 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav"); // Phát tiếng click
+        
         if (e.getSource() == btnBack) mainframe.showScreen("Welcome");
     }
 }

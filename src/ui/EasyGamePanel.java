@@ -85,8 +85,7 @@ public class EasyGamePanel extends BaseGamePanel {
         try {
             guess = Integer.parseInt(input);
         } catch (NumberFormatException ex) {
-            lblWarning.setText("⚠️ Số nhập vào quá lớn! Hãy nhập từ 0-100.");
-            lblWarning.setVisible(true);
+            showWarning("⚠️ Số nhập vào quá lớn! Hãy nhập từ 0-100.");
             return;
         }
         String result = engine.checkGuess(guess);

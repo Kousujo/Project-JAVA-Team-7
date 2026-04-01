@@ -39,7 +39,8 @@ public class EasyModeEngine extends AbstractGameEngine {
         return (10 - attemptsUsed ) * 100;
     }
 
-    public int getTargetNumber() {
-        return this.targetNumber;
+    @Override
+    public String getSecretCode() {
+        return String.valueOf(targetNumber);
     }
 }

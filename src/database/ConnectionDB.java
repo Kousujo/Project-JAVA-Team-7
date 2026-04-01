@@ -9,8 +9,8 @@ public class ConnectionDB {
 
     static {
         ds.setUser("sa");
-        ds.setPassword("100407");
-        ds.setServerName("Admin\\SQLEXPRESS");
+        ds.setPassword("123456");
+        ds.setServerName("ADMIN-Kousujo");
         ds.setPortNumber(1433);
         ds.setDatabaseName("the_chosen_number"); 
         ds.setEncrypt(false);
@@ -21,11 +21,11 @@ public class ConnectionDB {
         try {
             Connection conn = ds.getConnection();
             if (conn != null) {
-                System.out.println("Kết nối SQL Server thành công!");
+                System.out.println("Ket noi SQL Server thanh cong!");
                 return conn;
             }
         } catch (SQLException e) {
-            System.err.println("Lỗi kết nối: " + e.getMessage());
+            System.err.println("Loi ket noi: " + e.getMessage());
         }
         return null;
     }

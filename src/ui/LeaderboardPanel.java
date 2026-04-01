@@ -7,13 +7,14 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.List;
 
 public class LeaderboardPanel extends JPanel implements ActionListener {
     private MainFrame mainframe;
     private Image backgroundImage;
     private JButton btnBack;
     private JTable table;
-    private DefaultTableModel model;
+    private DefaultTableModel model; 
 
     public LeaderboardPanel(MainFrame frame) {
         this.mainframe = frame;
@@ -74,7 +75,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
                     String mode = model.getValueAt(row, 2).toString();
                     int time = (int) model.getValueAt(row, 3);
                     int turns = (int) model.getValueAt(row, 4);
-                    int secret = (int) model.getValueAt(row, 5);
+                    String secret = (String) model.getValueAt(row, 5);
                     
                     showPlayerStats(score, mode, time, turns, secret);
                 }
@@ -106,25 +107,21 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
 
         btnBack.addActionListener(this);
         
-        loadDataFromDB();
+        refreshData();
     }
 
-    private void loadDataFromDB() {
-    // 1. Xóa sạch dữ liệu cũ trên bảng
-    model.setRowCount(0); 
-    
-    // 2. Gọi DAO để lấy dữ liệu từ SQL Server
-    database.GameDAO dao = new database.GameDAO();
-    // Chúng ta cần bổ sung hàm getTopScores() vào GameDAO (xem mục 3 bên dưới)
-    java.util.List<Object[]> data = dao.getTopScores(); 
-    
-    // 3. Thêm từng dòng vào model
-    for (Object[] row : data) {
-        model.addRow(row);
+    public void refreshData() {
+        model.setRowCount(0); 
+
+        database.GameDAO dao = new database.GameDAO();
+        List<Object[]> list = dao.getTopScores(); 
+        
+        for (Object[] row : list) {
+            model.addRow(row);
+        }
     }
-}
-    // Cập nhật hàm hiện Popup: Hiện số lượt, thời gian, số bí mật
-    private void showPlayerStats(int score, String mode, int time, int turns, int secret) {
+
+    private void showPlayerStats(int score, String mode, int time, int turns, String secret) {
         JDialog dialog = new JDialog((Frame) SwingUtilities.getWindowAncestor(this), true);
         dialog.setUndecorated(true);
         dialog.setBackground(new Color(0, 0, 0, 0));
@@ -169,15 +166,6 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         dialog.pack();
         dialog.setLocationRelativeTo(this);
         dialog.setVisible(true);
-    }
-
-    public void refreshData() {
-        model.setRowCount(0); // Xóa dữ liệu cũ trên bảng giao diện
-        database.GameDAO dao = new database.GameDAO();
-        java.util.List<Object[]> data = dao.getTopScores();
-        for (Object[] row : data) {
-            model.addRow(row);
-        }
     }
 
     @Override

@@ -142,6 +142,8 @@ public class WelcomePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav"); // Phát hiệu ứng click
+        
         if (e.getSource() == btnNewGame) {
             mainframe.showScreen("Mode");
         }

@@ -219,6 +219,7 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         String status = isWin ? "WINNER" : "GAME OVER";
         
         if (isWin) {
+            logic.SoundManager.playSound("assets/win.wav");
             dao.insertGameResult(engine.calculateFinalScore(), modeName, engine.getSecretCode(), engine.getAttemptsUsed(), secondsElapsed);
         }
 
@@ -251,26 +252,30 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
 
     protected boolean validateInput(String input, int requiredLength) {
         if (input.isEmpty()) {
-            lblWarning.setText("⚠️ Không được để trống!");
-            lblWarning.setVisible(true);
+            showWarning("⚠️ Không được để trống!");
             return false;
         }
         if (!input.matches("\\d+")) {
-            lblWarning.setText("⚠️ Vui lòng chỉ nhập số!");
-            lblWarning.setVisible(true);
+            showWarning("⚠️ Vui lòng chỉ nhập số!");
             return false;
         }
         if (requiredLength > 0 && input.length() != requiredLength) {
-            lblWarning.setText("⚠️ Mật mã phải có đúng " + requiredLength + " chữ số!");
-            lblWarning.setVisible(true);
+            showWarning("⚠️ Mật mã phải có đúng " + requiredLength + " chữ số!");
             return false;
         }
         lblWarning.setVisible(false);
         return true;
     }
 
+    protected void showWarning(String message) {
+        lblWarning.setText(message);
+        lblWarning.setVisible(true);
+        logic.SoundManager.playSound("assets/wrong.wav");
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav");
         if (e.getSource() == btnGuess) {
             handleGuess();
         }

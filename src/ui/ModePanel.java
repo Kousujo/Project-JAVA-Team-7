@@ -118,6 +118,8 @@ public class ModePanel extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav"); // Phát tiếng click
+        
         if (e.getSource() == btnStart) {
             String selectedMode = "EASY";
             if (rbNormal.isSelected()) selectedMode = "NORMAL";

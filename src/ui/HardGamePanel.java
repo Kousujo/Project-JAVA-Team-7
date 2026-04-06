@@ -91,6 +91,9 @@ public class HardGamePanel extends BaseGamePanel {
             vertical.setValue(vertical.getMaximum());
         });
 
+        if (!result.contains("G,G,G,G,G")) {
+            logic.SoundManager.playSound("assets/wrong.wav");
+        }
         finalizeTurn("HARD");
     }
 }

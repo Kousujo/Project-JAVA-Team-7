@@ -100,9 +100,11 @@ public class EasyGamePanel extends BaseGamePanel {
         if (result.equals(TOO_HIGH)) {
             lblFeedback.setText("↓ QUÁ CAO ↓");
             lblFeedback.setForeground(COLOR_TOO_HIGH);
+            logic.SoundManager.playSound("assets/wrong.wav");
         } else if (result.equals(TOO_LOW)) {
             lblFeedback.setText("↑ QUÁ THẤP ↑");
             lblFeedback.setForeground(COLOR_TOO_LOW);
+            logic.SoundManager.playSound("assets/wrong.wav");
         } else if (result.equals(MATCH)) {
             lblFeedback.setText("✨ CHÍNH XÁC! ✨");
             lblFeedback.setForeground(COLOR_MATCH);

@@ -222,6 +222,8 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         if (isWin) {
             logic.SoundManager.playSound("assets/win.wav");
             dao.insertGameResult(engine.calculateFinalScore(), modeName, engine.getSecretCode(), engine.getAttemptsUsed(), secondsElapsed);
+        } else {
+            logic.SoundManager.playSound("assets/lose.wav");
         }
 
         ResultDialog dialog = new ResultDialog(

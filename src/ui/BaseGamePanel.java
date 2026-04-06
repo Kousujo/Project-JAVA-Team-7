@@ -38,13 +38,14 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         setupControls();
         setupWarning();
         setupBackButton();
-        setupTimer();   
+        setupTimer();
     }
 
-    protected void setupTitle() {}
     protected abstract void setupHistory();
     protected abstract void setupFeedback();
     protected abstract void handleGuess();
+
+    protected void setupTitle() {}
 
     public void initNewGame(String mode) {
         if (engine != null) {

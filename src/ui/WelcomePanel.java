@@ -7,20 +7,20 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class WelcomePanel extends JPanel implements ActionListener {
-    private MainFrame mainframe; 
+    private MainFrame mainframe;
     private JPanel statusPanel, infoPanel;
     private MultiLineOutlineLabel lbltitle;
     private JLabel lblsubtitle, lblname, lblscore, lblversion, lblauthor;
-    private JButton btnNewGame, btnLeaderboard; 
+    private JButton btnNewGame, btnLeaderboard;
     private Image backgroundImage;
 
     public WelcomePanel(MainFrame frame) {
-        this.mainframe = frame; 
+        this.mainframe = frame;
         backgroundImage = new ImageIcon("res/Toy.png").getImage();
 
-        setLayout(new GridBagLayout()); 
-        GridBagConstraints gbc = new GridBagConstraints(); 
-        
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
         btnLeaderboard = new JButton("🏆");
         btnLeaderboard.setToolTipText("Bảng xếp hạng");
         btnLeaderboard.setFont(new Font("SansSerif", Font.PLAIN, 20));
@@ -29,32 +29,35 @@ public class WelcomePanel extends JPanel implements ActionListener {
         btnLeaderboard.putClientProperty(FlatClientProperties.STYLE, "arc: 999");
         btnLeaderboard.setBackground(new Color(255, 255, 255, 150));
 
-        gbc.gridx = 0; gbc.gridy = 0;
-        gbc.weightx = 1.0; gbc.weighty = 0.0;
-        gbc.anchor = GridBagConstraints.NORTHWEST; 
-        gbc.insets = new Insets(20, 20, 0, 0); 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.0;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
+        gbc.insets = new Insets(20, 20, 0, 0);
         add(btnLeaderboard, gbc);
 
         lbltitle = new MultiLineOutlineLabel("THE CHOSEN\nNUMBER", SwingConstants.CENTER);
         lbltitle.setFont(new Font("SansSerif", Font.BOLD, 48));
         lbltitle.setForeground(Color.WHITE);
-        lbltitle.setOutlineColor(new Color(0, 0, 0, 180)); 
+        lbltitle.setOutlineColor(new Color(0, 0, 0, 180));
 
         lblsubtitle = new JLabel("Thử thách Đoán số");
         lblsubtitle.setFont(new Font("SansSerif", Font.ITALIC, 22));
         lblsubtitle.setForeground(new Color(0, 0, 0));
         lblsubtitle.setHorizontalAlignment(SwingConstants.CENTER);
 
-        gbc.gridx = 0; gbc.gridy = 0; 
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weighty = 0.3;
         gbc.anchor = GridBagConstraints.NORTH;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.insets = new Insets(85, 0, -20, 0); 
+        gbc.insets = new Insets(85, 0, -20, 0);
         add(lbltitle, gbc);
 
         gbc.gridy = 1;
         gbc.weighty = 0.0;
-        gbc.insets = new Insets(0, 0, 80, 0); 
+        gbc.insets = new Insets(0, 0, 80, 0);
         add(lblsubtitle, gbc);
 
         statusPanel = new JPanel(new GridLayout(2, 1, 0, 10)) {
@@ -62,7 +65,7 @@ public class WelcomePanel extends JPanel implements ActionListener {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(255, 255, 255, 100)); 
+                g2.setColor(new Color(255, 255, 255, 100));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.dispose();
             }
@@ -70,11 +73,13 @@ public class WelcomePanel extends JPanel implements ActionListener {
         statusPanel.setOpaque(false);
         statusPanel.setBorder(BorderFactory.createEmptyBorder(15, 45, 15, 45));
 
-        lblname = new JLabel("👤 Chế độ: Offline"); lblname.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        lblscore = new JLabel("⭐ Kỷ lục: 0"); lblscore.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        
-        lblname.setForeground(new Color(50, 50, 50)); 
-        lblscore.setForeground(new Color(50, 50, 50)); 
+        lblname = new JLabel("👤 Chế độ: Offline");
+        lblname.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        lblscore = new JLabel("⭐ Kỷ lục: 0");
+        lblscore.setFont(new Font("SansSerif", Font.PLAIN, 18));
+
+        lblname.setForeground(new Color(50, 50, 50));
+        lblscore.setForeground(new Color(50, 50, 50));
 
         statusPanel.add(lblname);
         statusPanel.add(lblscore);
@@ -121,16 +126,28 @@ public class WelcomePanel extends JPanel implements ActionListener {
         btnNewGame.addActionListener(this);
         btnLeaderboard.addActionListener(this);
 
-        refreshStatus(); 
+        refreshStatus();
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav");
+
+        if (e.getSource() == btnNewGame) {
+            mainframe.showScreen("Mode");
+        }
+        if (e.getSource() == btnLeaderboard) {
+            mainframe.showScreen("Leaderboard");
+        }
     }
 
     public void refreshStatus() {
         database.GameDAO dao = new database.GameDAO();
         int highscore = dao.getHighestScore();
-        
+
         lblscore.setText("⭐ Kỷ lục: " + highscore);
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
@@ -138,17 +155,5 @@ public class WelcomePanel extends JPanel implements ActionListener {
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         g2d.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        logic.SoundManager.playSound("assets/click.wav"); // Phát hiệu ứng click
-        
-        if (e.getSource() == btnNewGame) {
-            mainframe.showScreen("Mode");
-        }
-        if (e.getSource() == btnLeaderboard) {
-            mainframe.showScreen("Leaderboard");
-        }
     }
 }

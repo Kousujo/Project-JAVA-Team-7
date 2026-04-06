@@ -14,7 +14,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
     private Image backgroundImage;
     private JButton btnBack;
     private JTable table;
-    private DefaultTableModel model; 
+    private DefaultTableModel model;
 
     public LeaderboardPanel(MainFrame frame) {
         this.mainframe = frame;
@@ -26,8 +26,9 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         lblTitle.setFont(new Font("SansSerif", Font.BOLD, 54));
         lblTitle.setForeground(Color.WHITE);
         lblTitle.setOutlineColor(new Color(0, 0, 0, 180));
-        
-        gbc.gridx = 0; gbc.gridy = 0;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weighty = 0.2;
         gbc.insets = new Insets(60, 0, 20, 0);
         add(lblTitle, gbc);
@@ -45,10 +46,12 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         glassCard.setOpaque(false);
         glassCard.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        String[] columns = {"HẠNG", "ĐIỂM", "CHẾ ĐỘ", "TIME_HIDDEN", "TURNS_HIDDEN", "SECRET_HIDDEN"};
+        String[] columns = { "HẠNG", "ĐIỂM", "CHẾ ĐỘ", "TIME_HIDDEN", "TURNS_HIDDEN", "SECRET_HIDDEN" };
         model = new DefaultTableModel(null, columns) {
             @Override
-            public boolean isCellEditable(int row, int column) { return false; }
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
         };
 
         table = new JTable(model);
@@ -57,11 +60,11 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
         table.setShowGrid(false);
         table.setOpaque(false);
-        
+
         table.removeColumn(table.getColumnModel().getColumn(5)); // Secret
         table.removeColumn(table.getColumnModel().getColumn(4)); // Turns
         table.removeColumn(table.getColumnModel().getColumn(3)); // Time
-        
+
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.setDefaultRenderer(Object.class, centerRenderer);
@@ -76,7 +79,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
                     int time = (int) model.getValueAt(row, 3);
                     int turns = (int) model.getValueAt(row, 4);
                     String secret = (String) model.getValueAt(row, 5);
-                    
+
                     showPlayerStats(score, mode, time, turns, secret);
                 }
             }
@@ -90,7 +93,8 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         glassCard.add(scrollPane, BorderLayout.CENTER);
 
         gbc.gridy = 1;
-        gbc.weighty = 0.5; gbc.weightx = 0.1;
+        gbc.weighty = 0.5;
+        gbc.weightx = 0.1;
         gbc.fill = GridBagConstraints.BOTH;
         gbc.insets = new Insets(0, 90, 30, 90);
         add(glassCard, gbc);
@@ -99,25 +103,35 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         btnBack.setFont(new Font("SansSerif", Font.BOLD, 22));
         btnBack.setPreferredSize(new Dimension(220, 60));
         btnBack.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-        
-        gbc.gridy = 2; gbc.weighty = 0.2;
+
+        gbc.gridy = 2;
+        gbc.weighty = 0.2;
         gbc.fill = GridBagConstraints.NONE;
         gbc.insets = new Insets(0, 0, 55, 0);
         add(btnBack, gbc);
 
         btnBack.addActionListener(this);
-        
+
         refreshData();
     }
 
     public void refreshData() {
-        model.setRowCount(0); 
+        model.setRowCount(0);
 
         database.GameDAO dao = new database.GameDAO();
-        List<Object[]> list = dao.getTopScores(); 
-        
+        List<Object[]> list = dao.getTopScores();
+
         for (Object[] row : list) {
             model.addRow(row);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav");
+
+        if (e.getSource() == btnBack) {
+            mainframe.showScreen("Welcome");
         }
     }
 
@@ -135,7 +149,7 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.setColor(new Color(70, 130, 180));
                 g2.setStroke(new BasicStroke(3));
-                g2.drawRoundRect(1, 1, getWidth()-3, getHeight()-3, 30, 30);
+                g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 30, 30);
                 g2.dispose();
             }
         };
@@ -148,9 +162,11 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         JLabel lblTurns = new JLabel("🎯 Số lượt đoán: " + turns, SwingConstants.LEFT);
         JLabel lblTime = new JLabel("⏱ Thời gian: " + time + "s", SwingConstants.LEFT);
         JLabel lblSecret = new JLabel("🔑 Số bí mật: " + secret, SwingConstants.LEFT);
-        
+
         Font statFont = new Font("SansSerif", Font.PLAIN, 16);
-        lblTurns.setFont(statFont); lblTime.setFont(statFont); lblSecret.setFont(statFont);
+        lblTurns.setFont(statFont);
+        lblTime.setFont(statFont);
+        lblSecret.setFont(statFont);
 
         content.add(lblTitle);
         content.add(lblTurns);
@@ -159,7 +175,9 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
 
         dialog.addMouseListener(new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) { dialog.dispose(); }
+            public void mouseClicked(MouseEvent e) {
+                dialog.dispose();
+            }
         });
 
         dialog.add(content);
@@ -174,12 +192,5 @@ public class LeaderboardPanel extends JPanel implements ActionListener {
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         g2d.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        logic.SoundManager.playSound("assets/click.wav"); // Phát tiếng click
-        
-        if (e.getSource() == btnBack) mainframe.showScreen("Welcome");
     }
 }

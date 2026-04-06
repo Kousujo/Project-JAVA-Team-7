@@ -7,6 +7,7 @@ public class SoundManager {
     
     public static boolean isSoundEnabled = true;
     public static boolean isBgmEnabled = true;
+    public static String currentBgmPath = "assets/bgm2.wav";
     
     private static Clip bgmClip;
 
@@ -32,10 +33,10 @@ public class SoundManager {
                 clip.open(audioIn); // Mở file âm thanh vào Clip
                 clip.start(); // Cứ cho chạy, không cần quan tâm bộ nhớ
             } else {
-                System.out.println("Không tìm thấy file SFX: " + filePath);
+                System.out.println("Khong tim thay file SFX: " + filePath);
             }
         } catch (Exception e) {
-            System.out.println("Lỗi phát SFX: " + e.getMessage());
+            System.out.println("Loi phat SFX: " + e.getMessage());
         }
     }
     
@@ -57,10 +58,10 @@ public class SoundManager {
                 bgmClip.loop(Clip.LOOP_CONTINUOUSLY); // Lặp nhạc nền liên tục
                 bgmClip.start();
             } else {
-                System.out.println("Không tìm thấy file BGM: " + filePath);
+                System.out.println("Khong tim thay file BGM: " + filePath);
             }
         } catch (Exception e) {
-            System.out.println("Lỗi phát BGM: " + e.getMessage());
+            System.out.println("Loi phat BGM: " + e.getMessage());
         }
     }
     

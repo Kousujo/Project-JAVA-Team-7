@@ -11,14 +11,10 @@ public class SettingsPanel extends JPanel {
 
     public SettingsPanel(MainFrame frame) {
         this.mainframe = frame;
-        
-        // 1. Nạp ảnh nền giống với BaseGamePanel
         this.backgroundImage = new ImageIcon("res/Toy.png").getImage();
-        
-        // Căn giữa toàn bộ bằng GridBagLayout
+
         setLayout(new GridBagLayout());
-        
-        // 2. Tạo hiệu ứng Kính mờ (Glassmorphism) để đồng bộ với màn hình Game
+
         JPanel glassCard = new JPanel() {
             @Override
             protected void paintComponent(Graphics g) {
@@ -34,13 +30,11 @@ public class SettingsPanel extends JPanel {
         glassCard.setLayout(new BoxLayout(glassCard, BoxLayout.Y_AXIS));
         glassCard.setBorder(BorderFactory.createEmptyBorder(40, 50, 40, 50));
 
-        // Tiêu đề màn hình
         JLabel lblTitle = new JLabel("CÀI ĐẶT HỆ THỐNG", SwingConstants.CENTER);
         lblTitle.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitle.setForeground(new Color(44, 62, 80)); // Màu chữ tối cho dễ đọc trên nền sáng
         lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        // 3. NÚT BẬT/TẮT HIỆU ỨNG ÂM THANH (SFX)
         JCheckBox chkSound = new JCheckBox("Bật hiệu ứng âm thanh (Click, Win, Error)");
         chkSound.setFont(new Font("SansSerif", Font.BOLD, 18));
         chkSound.setSelected(SoundManager.isSoundEnabled); 
@@ -55,7 +49,6 @@ public class SettingsPanel extends JPanel {
             }
         });
 
-        // 4. NÚT BẬT/TẮT NHẠC NỀN (BGM)
         JCheckBox chkBgm = new JCheckBox("Bật nhạc nền (Background Music)");
         chkBgm.setFont(new Font("SansSerif", Font.BOLD, 18));
         chkBgm.setSelected(SoundManager.isBgmEnabled);
@@ -66,20 +59,18 @@ public class SettingsPanel extends JPanel {
         chkBgm.addActionListener(e -> {
             SoundManager.isBgmEnabled = chkBgm.isSelected();
             if (SoundManager.isBgmEnabled) {
-                SoundManager.playBgm("assets/bgm.wav");
+                SoundManager.playBgm(SoundManager.currentBgmPath);
             } else {
                 SoundManager.stopBgm();
             }
         });
 
-        // 5. NÚT QUAY LẠI (Được phóng to và gắn style FlatLaf)
         JButton btnBack = new JButton("QUAY LẠI");
-        btnBack.setFont(new Font("SansSerif", Font.BOLD, 22)); // Font to hơn
-        btnBack.setPreferredSize(new Dimension(250, 55)); // Kích thước bự hơn
+        btnBack.setFont(new Font("SansSerif", Font.BOLD, 22));
+        btnBack.setPreferredSize(new Dimension(250, 55));
         btnBack.setMaximumSize(new Dimension(250, 55)); 
         btnBack.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        // Dùng FlatLaf để bo góc và tô màu giống hệt nút THOÁT ở màn hình Game
         btnBack.putClientProperty(FlatClientProperties.STYLE, "background: #c0392b; foreground: #ffffff; arc: 20");
         
         btnBack.addActionListener(e -> mainframe.showScreen("Welcome"));
@@ -93,11 +84,9 @@ public class SettingsPanel extends JPanel {
         glassCard.add(Box.createRigidArea(new Dimension(0, 60)));
         glassCard.add(btnBack);
 
-        // Thêm thẻ kính mờ vào giữa màn hình
         add(glassCard);
     }
 
-    // Ghi đè phương thức paintComponent để vẽ ảnh nền
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

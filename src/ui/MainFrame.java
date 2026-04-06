@@ -9,10 +9,10 @@ public class MainFrame extends JFrame implements ActionListener {
     private CardLayout cardLayout;
     private JPanel mainPanel;
     private JMenuBar menuBar;
-    private JMenu menuSystem, menuSetting, menuHelp;
-    private JMenuItem itemReset, itemExit, itemAbout, itemSetting;
+    private JMenu menuSystem, menuSetting, menuHelp, menuBgm;
+    private JMenuItem itemReset, itemExit, itemAbout, itemSetting, itemBgm1, itemBgm2, itemBgm3;
     private String selectedMode = "EASY";
-    
+
     private WelcomePanel welcomePanel;
     private ModePanel modePanel;
     private LeaderboardPanel leaderboardPanel;
@@ -46,52 +46,13 @@ public class MainFrame extends JFrame implements ActionListener {
         mainPanel.add(easyGamePanel, "Easy");
         mainPanel.add(normalGamePanel, "Normal");
         mainPanel.add(hardGamePanel, "Hard");
-        mainPanel.add(settingsPanel, "Settings"); 
+        mainPanel.add(settingsPanel, "Settings");
 
         add(mainPanel);
 
         showScreen("Welcome");
-        
-        SoundManager.playBgm("assets/bgm.wav");
-    }  
 
-    public void showScreen(String screenName) {
-        if (screenName.equals("Leaderboard")) {
-            leaderboardPanel.refreshData(); 
-        } else if (screenName.equals("Welcome")) {
-            welcomePanel.refreshStatus();
-        }
-        
-        cardLayout.show(mainPanel, screenName);
-    }  
-
-    public String getSelectedMode() {
-        return selectedMode;
-    }
-
-    public void startNewGame(String mode) {
-        this.selectedMode = mode; 
-        
-        switch (mode) {
-            case "EASY":
-                easyGamePanel.initNewGame(mode);
-                showScreen("Easy");
-                break;
-                
-            case "NORMAL":
-                normalGamePanel.initNewGame(mode);
-                showScreen("Normal");
-                break;
-                
-            case "HARD":
-                hardGamePanel.initNewGame(mode);
-                showScreen("Hard");
-                break;
-                
-            default:
-                showScreen("Welcome");
-                break;
-        }
+        SoundManager.playBgm(SoundManager.currentBgmPath);
     }
 
     private void initMenuBar() {
@@ -107,8 +68,18 @@ public class MainFrame extends JFrame implements ActionListener {
 
         menuSetting = new JMenu("Tùy chỉnh");
         itemSetting = new JMenuItem("Cài đặt");
-        
+
+        menuBgm = new JMenu("Nhạc nền");
+        itemBgm1 = new JMenuItem("Bản nhạc 1");
+        itemBgm2 = new JMenuItem("Bản nhạc 2");
+        itemBgm3 = new JMenuItem("Bản nhạc 3");
+
+        menuBgm.add(itemBgm1);
+        menuBgm.add(itemBgm2);
+        menuBgm.add(itemBgm3);
+
         menuSetting.add(itemSetting);
+        menuSetting.add(menuBgm);
 
         menuHelp = new JMenu("Trợ giúp");
         itemAbout = new JMenuItem("Về chúng tôi");
@@ -123,7 +94,69 @@ public class MainFrame extends JFrame implements ActionListener {
         itemReset.addActionListener(this);
         itemExit.addActionListener(this);
         itemAbout.addActionListener(this);
+        itemBgm1.addActionListener(this);
+        itemBgm2.addActionListener(this);
+        itemBgm3.addActionListener(this);
         itemSetting.addActionListener(this);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == itemReset) {
+            stopAllTimers();
+            this.showScreen("Welcome");
+        } else if (e.getSource() == itemExit) {
+            System.exit(0);
+        } else if (e.getSource() == itemSetting) {
+            showScreen("Settings");
+        } else if (e.getSource() == itemBgm1) {
+            changeBgm("assets/bgm1.wav");
+        } else if (e.getSource() == itemBgm2) {
+            changeBgm("assets/bgm2.wav");
+        } else if (e.getSource() == itemBgm3) {
+            changeBgm("assets/bgm3.wav");
+        } else if (e.getSource() == itemAbout) {
+            JOptionPane.showMessageDialog(this, "Ứng dụng được phát triển bởi Team 7");
+        }
+    }
+
+    public void showScreen(String screenName) {
+        if (screenName.equals("Leaderboard")) {
+            leaderboardPanel.refreshData();
+        } else if (screenName.equals("Welcome")) {
+            welcomePanel.refreshStatus();
+        }
+
+        cardLayout.show(mainPanel, screenName);
+    }
+
+    public String getSelectedMode() {
+        return selectedMode;
+    }
+
+    public void startNewGame(String mode) {
+        this.selectedMode = mode;
+
+        switch (mode) {
+            case "EASY":
+                easyGamePanel.initNewGame(mode);
+                showScreen("Easy");
+                break;
+
+            case "NORMAL":
+                normalGamePanel.initNewGame(mode);
+                showScreen("Normal");
+                break;
+
+            case "HARD":
+                hardGamePanel.initNewGame(mode);
+                showScreen("Hard");
+                break;
+
+            default:
+                showScreen("Welcome");
+                break;
+        }
     }
 
     public void stopAllTimers() {
@@ -132,20 +165,11 @@ public class MainFrame extends JFrame implements ActionListener {
         hardGamePanel.stopGameTimer();
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == itemReset) {
-            stopAllTimers();
-            this.showScreen("Welcome");
-        }
-        else if (e.getSource() == itemExit) {
-            System.exit(0);
-        }
-        else if (e.getSource() == itemSetting) {
-            showScreen("Settings");
-        }
-        else if (e.getSource() == itemAbout) {
-            JOptionPane.showMessageDialog(this,"Ứng dụng được phát triển bởi Team 7");
+    private void changeBgm(String path) {
+        SoundManager.currentBgmPath = path;
+        if (SoundManager.isBgmEnabled) {
+            SoundManager.playBgm(path);
         }
     }
+
 }

@@ -30,7 +30,7 @@ public class HardGamePanel extends BaseGamePanel {
     }
     
     @Override
-    protected void setupFeedback() { // hard mode có sắn feedback trong handleguess
+    protected void setupFeedback() {
     }
 
     @Override

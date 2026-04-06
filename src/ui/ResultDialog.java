@@ -7,7 +7,7 @@ import java.awt.*;
 public class ResultDialog extends JDialog {
     private boolean retry = false;
 
-    public ResultDialog(Frame owner, String status, int score, int time, int turns, String secret ) {
+    public ResultDialog(Frame owner, String status, int score, int time, int turns, String secret) {
         super(owner, true);
         setUndecorated(true);
         setBackground(new Color(0, 0, 0, 0));
@@ -35,36 +35,44 @@ public class ResultDialog extends JDialog {
         JLabel lblStatus = new JLabel(status, SwingConstants.CENTER);
         lblStatus.setFont(new Font("SansSerif", Font.BOLD, 40));
         lblStatus.setForeground(status.equals("WINNER") ? new Color(46, 204, 113) : new Color(231, 76, 60));
-        
-        gbc.gridy = 0; 
+
+        gbc.gridy = 0;
         gbc.insets = new Insets(10, 0, 20, 0);
         content.add(lblStatus, gbc);
 
         String stats = String.format(
-            "<html><div style='text-align: center; font-family: SansSerif; font-size: 13pt; color: #333;'>"
-            + "⭐ Điểm: <b>%d</b> | 🎯 Lượt: <b>%d</b><br>"
-            + "🕒 Thời gian: <b>%ds</b><br>"
-            + "<font color='red'>🔑 Số bí mật: <b>%s</b></font>"
-            + "</div></html>", score, time, turns, secret
-        );
+                "<html><div style='text-align: center; font-family: SansSerif; font-size: 13pt; color: #333;'>"
+                        + "⭐ Điểm: <b>%d</b> | 🎯 Lượt: <b>%d</b><br>"
+                        + "🕒 Thời gian: <b>%ds</b><br>"
+                        + "<font color='red'>🔑 Số bí mật: <b>%s</b></font>"
+                        + "</div></html>",
+                score, time, turns, secret);
         JLabel lblStats = new JLabel(stats, SwingConstants.CENTER);
-        
-        gbc.gridy = 1; 
+
+        gbc.gridy = 1;
         gbc.insets = new Insets(10, 0, 30, 0);
         content.add(lblStats, gbc);
 
         JButton btnRetry = createBtn("AGAIN!", new Color(70, 130, 180), Color.WHITE);
         JButton btnMenu = createBtn("NEW GAME", Color.WHITE, Color.BLACK);
 
-        btnRetry.addActionListener(e -> { retry = true; dispose(); });
-        btnMenu.addActionListener(e -> { retry = false; dispose(); });
+        btnRetry.addActionListener(e -> {
+            retry = true;
+            dispose();
+        });
+        btnMenu.addActionListener(e -> {
+            retry = false;
+            dispose();
+        });
 
-        gbc.gridy = 2; gbc.insets = new Insets(0, 0, 10, 0);
+        gbc.gridy = 2;
+        gbc.insets = new Insets(0, 0, 10, 0);
         content.add(btnRetry, gbc);
         gbc.gridy = 3;
         content.add(btnMenu, gbc);
 
         add(content);
+
         pack();
         setLocationRelativeTo(owner);
     }
@@ -80,5 +88,7 @@ public class ResultDialog extends JDialog {
         return btn;
     }
 
-    public boolean isRetry() { return retry; }
+    public boolean isRetry() {
+        return retry;
+    }
 }

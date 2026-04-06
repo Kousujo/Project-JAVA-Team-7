@@ -13,7 +13,7 @@ public class ModePanel extends JPanel implements ActionListener {
     private JButton btnStart, btnBack;
     private Image backgroundImage;
     private JPanel modePanel, buttonPanel;
-    private MultiLineOutlineLabel lblHeader; 
+    private MultiLineOutlineLabel lblHeader;
 
     public ModePanel(MainFrame frame) {
         this.mainframe = frame;
@@ -21,16 +21,17 @@ public class ModePanel extends JPanel implements ActionListener {
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        
-        lblHeader = new MultiLineOutlineLabel("SELECT\nMODE", SwingConstants.CENTER); // Gọn hơn
+
+        lblHeader = new MultiLineOutlineLabel("SELECT\nMODE", SwingConstants.CENTER);
         lblHeader.setFont(new Font("SansSerif", Font.BOLD, 60));
         lblHeader.setForeground(Color.WHITE);
         lblHeader.setOutlineColor(new Color(0, 0, 0, 180));
-        
-        gbc.gridx = 0; gbc.gridy = 0;
+
+        gbc.gridx = 0;
+        gbc.gridy = 0;
         gbc.weighty = 0.3;
         gbc.anchor = GridBagConstraints.NORTH;
-        gbc.insets = new Insets(100, 0, -50, 0); 
+        gbc.insets = new Insets(100, 0, -50, 0);
         add(lblHeader, gbc);
 
         modePanel = new JPanel(new GridLayout(3, 1, 0, 15)) {
@@ -38,7 +39,7 @@ public class ModePanel extends JPanel implements ActionListener {
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(new Color(255, 255, 255, 120)); 
+                g2.setColor(new Color(255, 255, 255, 120));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.dispose();
             }
@@ -65,10 +66,12 @@ public class ModePanel extends JPanel implements ActionListener {
         rbHard.setOpaque(false);
         rbHard.setFocusPainted(false);
 
-        rbEasy.setSelected(true); 
+        rbEasy.setSelected(true);
 
         group = new ButtonGroup();
-        group.add(rbEasy); group.add(rbNormal); group.add(rbHard);
+        group.add(rbEasy);
+        group.add(rbNormal);
+        group.add(rbHard);
 
         modePanel.add(rbEasy);
         modePanel.add(rbNormal);
@@ -87,7 +90,7 @@ public class ModePanel extends JPanel implements ActionListener {
         btnStart.setFont(new Font("SansSerif", Font.BOLD, 22));
         btnStart.setPreferredSize(new Dimension(180, 55));
         btnStart.putClientProperty(FlatClientProperties.BUTTON_TYPE, FlatClientProperties.BUTTON_TYPE_ROUND_RECT);
-        btnStart.setBackground(new Color(70, 130, 180)); 
+        btnStart.setBackground(new Color(70, 130, 180));
         btnStart.setForeground(Color.WHITE);
 
         btnBack = new JButton("BACK");
@@ -108,27 +111,29 @@ public class ModePanel extends JPanel implements ActionListener {
     }
 
     @Override
+    public void actionPerformed(ActionEvent e) {
+        logic.SoundManager.playSound("assets/click.wav");
+
+        if (e.getSource() == btnStart) {
+            String selectedMode = "EASY";
+            if (rbNormal.isSelected())
+                selectedMode = "NORMAL";
+            else if (rbHard.isSelected())
+                selectedMode = "HARD";
+
+            mainframe.startNewGame(selectedMode);
+
+        } else if (e.getSource() == btnBack) {
+            mainframe.showScreen("Welcome");
+        }
+    }
+
+    @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2d = (Graphics2D) g.create();
         g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         g2d.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         g2d.dispose();
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        logic.SoundManager.playSound("assets/click.wav"); // Phát tiếng click
-        
-        if (e.getSource() == btnStart) {
-            String selectedMode = "EASY";
-            if (rbNormal.isSelected()) selectedMode = "NORMAL";
-            else if (rbHard.isSelected()) selectedMode = "HARD";
-            
-            mainframe.startNewGame(selectedMode);
-            
-        } else if (e.getSource() == btnBack) {
-            mainframe.showScreen("Welcome");
-        }
     }
 }

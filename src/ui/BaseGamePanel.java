@@ -273,7 +273,6 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
     protected void showWarning(String message) {
         lblWarning.setText(message);
         lblWarning.setVisible(true);
-        logic.SoundManager.playSound("assets/wrong.wav");
     }
 
     @Override

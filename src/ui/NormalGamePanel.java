@@ -160,9 +160,6 @@ public class NormalGamePanel extends BaseGamePanel {
             }
             allMatch = hints[0].equals(MATCH) && hints[1].equals(MATCH);
         }
-        if (!allMatch) {
-            logic.SoundManager.playSound("assets/wrong.wav");
-        }
 
         if (lblFeedbackLeft.getText().equals(MATCH) || lblFeedbackRight.getText().equals(MATCH)) {
             if (engine.getAttemptsUsed() <= 5) {

@@ -60,8 +60,7 @@ public class EasyGamePanel extends BaseGamePanel {
     
     @Override
     protected void setupHistory() {
-        buildHistoryUI(
-            new Color(255, 255, 255, 140), 
+        buildHistoryUI( 
             new Dimension(350, 200), 
             0.3, 
             new Insets(20, 65, 20, 65)

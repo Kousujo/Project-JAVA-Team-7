@@ -93,13 +93,13 @@ public abstract class BaseGamePanel extends JPanel implements ActionListener {
         add(statsPanel, gbc);
     }
 
-    protected void buildHistoryUI(Color bgColor, Dimension preferredSize, double weighty, Insets insets) {
+    protected void buildHistoryUI(Dimension preferredSize, double weighty, Insets insets) {
         JPanel glassCard = new JPanel(new BorderLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 Graphics2D g2 = (Graphics2D) g.create();
                 g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(bgColor);
+                g2.setColor(new Color(255, 255, 255, 140));
                 g2.fillRoundRect(0, 0, getWidth(), getHeight(), 30, 30);
                 g2.dispose();
             }

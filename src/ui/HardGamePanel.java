@@ -26,7 +26,7 @@ public class HardGamePanel extends BaseGamePanel {
 
     @Override
     protected void setupTitle() {
-        super.setupTitle("HARD GUESS", new Color(230, 226, 46));
+        super.setupTitle("HARD GUESS", new Color(199, 0, 0));
     }
     
     @Override
@@ -36,7 +36,6 @@ public class HardGamePanel extends BaseGamePanel {
     @Override
     protected void setupHistory() {
         buildHistoryUI(
-            new Color(0, 0, 0, 100), 
             new Dimension(400, 350), 
             0.5, 
             new Insets(10, 50, 20, 50)

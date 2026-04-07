@@ -35,7 +35,7 @@ public class NormalGamePanel extends BaseGamePanel {
     
     @Override
     protected void setupTitle() {
-        super.setupTitle("NORMAL GUESS", new Color(230, 226, 46));
+        super.setupTitle("NORMAL GUESS", new Color(240, 226, 46));
     }
     
     @Override
@@ -69,7 +69,6 @@ public class NormalGamePanel extends BaseGamePanel {
     @Override
     protected void setupHistory() {
         buildHistoryUI(
-            new Color(0, 0, 0, 100), 
             new Dimension(400, 250), 
             0.4, 
             new Insets(10, 50, 20, 50)

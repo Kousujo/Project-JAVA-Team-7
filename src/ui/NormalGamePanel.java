@@ -141,6 +141,7 @@ public class NormalGamePanel extends BaseGamePanel {
 
         String[] hints = result.split("\\|");
 
+        boolean allMatch = false;
         if (hints.length == 2) {
             lblFeedbackLeft.setText(hints[0]);
             switch (hints[0]) {
@@ -156,6 +157,7 @@ public class NormalGamePanel extends BaseGamePanel {
                 case DOWN: lblFeedbackRight.setForeground(COLOR_DOWN); break;
                 default: lblFeedbackRight.setForeground(Color.WHITE);
             }
+            allMatch = hints[0].equals(MATCH) && hints[1].equals(MATCH);
         }
 
         if (lblFeedbackLeft.getText().equals(MATCH) || lblFeedbackRight.getText().equals(MATCH)) {
